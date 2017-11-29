@@ -16,5 +16,5 @@ func main() {
 	r.PathPrefix("/dist/").Handler(http.FileServer(http.Dir("./static/")))
 
 	// start server
-	log.Fatal(http.ListenAndServe(":6000", r))
+	log.Fatal(http.ListenAndServe(":3030", r))
 }
