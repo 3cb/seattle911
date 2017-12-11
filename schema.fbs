@@ -1,0 +1,18 @@
+namespace Seattle;
+
+table Message {
+    type:string;    // history, init, update
+    date:string;
+    calls:[Call];
+}
+
+table Call {
+    address:string;
+    date_time:string;
+    incident_number:string;
+    latitude:string;
+    longitude:string;
+    type:string;
+}
+
+root_type Message;
