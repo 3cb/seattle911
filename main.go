@@ -11,7 +11,7 @@ import (
 
 func main() {
 	// open database and create buckets of key/value pairs
-	db, err := bolt.Open("fire.db", 0600, nil)
+	db, err := bolt.Open("calls.db", 0600, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
