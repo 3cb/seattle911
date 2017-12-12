@@ -1,0 +1,29 @@
+namespace Seattle.Police;
+
+table PoliceMessage {
+    type:string;    // history, init, update
+    date:string;
+    calls:[PoliceCall];
+}
+
+table PoliceCall {
+    at_scene_time:string;
+    cad_cdw_id:string;
+    cad_event_number:string;
+    census_tract:string;
+    event_clearance_code:string;
+    event_clearance_date:string;
+    event_clearance_description:string;
+    event_clearance_group:string;
+    event_clearance_subgroup:string;
+    general_offense_number:string;
+    hundred_block_location:string;
+    initial_type_description:string;
+    initial_type_group:string;
+    initial_type_subgroup:string;
+    latitude:string;
+    longitude:string;
+    zone_beat:string;
+}
+
+root_type PoliceMessage;

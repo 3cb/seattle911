@@ -1,12 +1,12 @@
-namespace Seattle;
+namespace Seattle.Fire;
 
-table Message {
+table FireMessage {
     type:string;    // history, init, update
     date:string;
-    calls:[Call];
+    calls:[FireCall];
 }
 
-table Call {
+table FireCall {
     address:string;
     date_time:string;
     incident_number:string;
@@ -15,4 +15,4 @@ table Call {
     type:string;
 }
 
-root_type Message;
+root_type FireMessage;
