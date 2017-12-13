@@ -1,9 +1,19 @@
-namespace Seattle.Police;
+namespace Seattle;
 
-table PoliceMessage {
+table Message {
     type:string;    // history, init, update
     date:string;
-    calls:[PoliceCall];
+    fire_calls:[FireCall];
+    police_calls:[PoliceCalls]
+}
+
+table FireCall {
+    address:string;
+    date_time:string;
+    incident_number:string;
+    latitude:string;
+    longitude:string;
+    type:string;
 }
 
 table PoliceCall {
@@ -26,4 +36,4 @@ table PoliceCall {
     zone_beat:string;
 }
 
-root_type PoliceMessage;
+root_type Message;
