@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/3cb/ssc"
+
 	"github.com/boltdb/bolt"
 	"github.com/gorilla/mux"
 )
@@ -24,6 +26,20 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.Close()
+
+	// launch empty websocket pool
+	config := ssc.PoolConfig{
+		IsReadable: true,
+		IsWritable: true,
+		IsJSON:     false,
+	}
+	wsp, err := ssc.NewSocketPool(nil, config)
+	if err != nil {
+		log.Fatal("Unable to start pool to serve websocket connections.")
+	}
+
+	// start 5 minute polling goroutine
+	go poll(db, wsp)
 
 	// create new router instance
 	r := mux.NewRouter()
