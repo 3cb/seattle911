@@ -4,12 +4,12 @@ table Message {
     type:string;    // history, init, update
     date:string;
     fire_calls:[FireCall];
-    police_calls:[PoliceCalls]
+    police_calls:[PoliceCalls];
 }
 
 table FireCall {
     address:string;
-    date_time:string;
+    datetime:string;
     incident_number:string;
     latitude:string;
     longitude:string;
