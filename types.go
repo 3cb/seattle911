@@ -1,27 +1,13 @@
 package main
 
-// FireMessage describes data structure for a day of 911 fire calls as it is stored in databased and sent over websocket connection
-type FireMessage struct {
-	Type  string     `json:"type"`
-	Date  string     `json:"date"`
-	Calls []FireCall `json:"calls"`
-}
-
 // FireCall describes data structure for each 911 fire call
 type FireCall struct {
 	Address        string `json:"address"`
-	DateTime       string `json:"date_time"`
+	DateTime       string `json:"datetime"`
 	IncidentNumber string `json:"incident_number"`
 	Latitude       string `json:"latitude"`
 	Longitude      string `json:"longitude"`
 	Type           string `json:"type"`
-}
-
-// PoliceMessage describes data structure for a day of 911 police calls as it is stored in database and sent over websocket connection
-type PoliceMessage struct {
-	Type  string       `json:"type"`
-	Date  string       `json:"date"`
-	Calls []PoliceCall `json:"calls"`
 }
 
 // PoliceCall describes data structure for individual 911 police calls
