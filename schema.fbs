@@ -4,7 +4,7 @@ table Message {
     type:string;    // history, init, update
     date:string;
     fire_calls:[FireCall];
-    police_calls:[PoliceCalls];
+    police_calls:[PoliceCall];
 }
 
 table FireCall {
