@@ -40,13 +40,15 @@ func poll(db *bolt.DB, pool *ssc.SocketPool) {
 		if err != nil {
 			log.Printf("Unable to update fire calls: %v", err)
 		} else {
-			log.Printf("Fire:\n%+v\n", f)
+			log.Printf("Fire updated")
+			// log.Printf("Fire:\n%+v\n", f)
 		}
 		err = updatePolice(p)
 		if err != nil {
 			log.Printf("Unable to update police calls: %v", err)
 		} else {
-			log.Printf("Police:\n%+v\n", p)
+			log.Printf("Police updated")
+			// log.Printf("Police:\n%+v\n", p)
 		}
 	}
 }
