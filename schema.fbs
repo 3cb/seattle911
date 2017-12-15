@@ -21,6 +21,7 @@ table PoliceCall {
     cad_cdw_id:string;
     cad_event_number:string;
     census_tract:string;
+    district_sector:string;
     event_clearance_code:string;
     event_clearance_date:string;
     event_clearance_description:string;
