@@ -1,7 +1,6 @@
-namespace Seattle;
+namespace seattle;
 
 table Message {
-    type:string;    // history, init, update
     date:string;
     fire_calls:[FireCall];
     police_calls:[PoliceCall];
