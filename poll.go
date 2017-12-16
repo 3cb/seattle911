@@ -33,6 +33,8 @@ func poll(db *bolt.DB, pool *ssc.SocketPool) {
 		// log.Printf("Police:\n%+v\n", p)
 		log.Printf("Police updated")
 	}
+	buf := serialize(*f, *p)
+	fmt.Print(buf)
 
 	for {
 		<-ticker.C
@@ -50,6 +52,8 @@ func poll(db *bolt.DB, pool *ssc.SocketPool) {
 			log.Printf("Police updated")
 			// log.Printf("Police:\n%+v\n", p)
 		}
+		buf := serialize(*f, *p)
+		fmt.Print(buf)
 	}
 }
 
