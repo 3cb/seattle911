@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 
-	"github.com/3cb/seattle911/seattle"
 	"github.com/boltdb/bolt"
 )
 
@@ -17,7 +16,13 @@ func createBucket(db *bolt.DB, name string) error {
 	})
 }
 
-func updateDB(date string, msg seattle.Message) error {
-
-	return nil
+func updateDB(db *bolt.DB, date string, msg []byte) error {
+	return db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("Messages"))
+		err := b.Put([]byte(date), msg)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 }
