@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/3cb/seattle911/seattle"
@@ -9,7 +8,6 @@ import (
 )
 
 func serialize(fireCalls []FireCall, policeCalls []PoliceCall) ([]byte, string) {
-	fmt.Printf("fireCalls:\n%+v", fireCalls)
 	builder := flatbuffers.NewBuilder(1024)
 
 	fire := []flatbuffers.UOffsetT{}
@@ -35,9 +33,7 @@ func serialize(fireCalls []FireCall, policeCalls []PoliceCall) ([]byte, string) 
 		builder.PrependUOffsetT(fire[i])
 	}
 	fCalls := builder.EndVector(len(fireCalls))
-	// builder.Reset()
 
-	fmt.Printf("\n\npoliceCalls:\n%+v", policeCalls)
 	police := []flatbuffers.UOffsetT{}
 	for _, call := range policeCalls {
 		atSceneTime := builder.CreateString(call.AtSceneTime)
@@ -85,7 +81,6 @@ func serialize(fireCalls []FireCall, policeCalls []PoliceCall) ([]byte, string) 
 		builder.PrependUOffsetT(police[i])
 	}
 	pCalls := builder.EndVector(len(policeCalls))
-	// builder.Reset()
 
 	date := builder.CreateString(strings.Split(fireCalls[0].DateTime, "T")[0])
 
@@ -97,7 +92,6 @@ func serialize(fireCalls []FireCall, policeCalls []PoliceCall) ([]byte, string) 
 
 	builder.Finish(msg)
 	buf := builder.FinishedBytes()
-	fmt.Print(buf)
 
 	return buf, strings.Split(fireCalls[0].DateTime, "T")[0]
 }
