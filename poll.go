@@ -33,7 +33,10 @@ func poll(db *bolt.DB, pool *ssc.SocketPool) {
 	}
 
 	buf, date := serialize(f, p)
-	fmt.Printf("=========================%v:\n\n%v\n\n", date, buf)
+	err = updateDB(db, date, buf)
+	if err != nil {
+		log.Printf("Unable to save to database: %v\n", err)
+	}
 
 	for {
 		<-ticker.C
@@ -50,7 +53,10 @@ func poll(db *bolt.DB, pool *ssc.SocketPool) {
 			log.Printf("Police updated")
 		}
 		buf, date := serialize(f, p)
-		fmt.Printf("=========================%v:\n\n%v\n\n", date, buf)
+		err = updateDB(db, date, buf)
+		if err != nil {
+			log.Printf("Unable to save to database: %v\n", err)
+		}
 	}
 }
 
