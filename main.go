@@ -13,15 +13,11 @@ import (
 
 func main() {
 	// open database and create buckets of key/value pairs
-	db, err := bolt.Open("calls.db", 0600, nil)
+	db, err := bolt.Open("my.db", 0600, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = createBucket(db, "Fire")
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = createBucket(db, "Police")
+	err = createBucket(db, "Messages")
 	if err != nil {
 		log.Fatal(err)
 	}
