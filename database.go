@@ -8,16 +8,18 @@ import (
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
-func serialize(fireCalls []FireCall, policeCalls []PoliceCall) []byte {
+func serialize(fireCalls []FireCall, policeCalls []PoliceCall) ([]byte, string) {
+	fmt.Printf("fireCalls:\n%+v", fireCalls)
 	builder := flatbuffers.NewBuilder(1024)
-	seattle.MessageStartFireCallsVector(builder, len(fireCalls))
-	for i := len(fireCalls) - 1; i >= 0; i-- {
-		address := builder.CreateString(fireCalls[i].Address)
-		datetime := builder.CreateString(fireCalls[i].DateTime)
-		incidentNumber := builder.CreateString(fireCalls[i].IncidentNumber)
-		latitude := builder.CreateString(fireCalls[i].Latitude)
-		longitude := builder.CreateString(fireCalls[i].Longitude)
-		tp := builder.CreateString(fireCalls[i].Type)
+
+	fire := []flatbuffers.UOffsetT{}
+	for _, call := range fireCalls {
+		address := builder.CreateString(call.Address)
+		datetime := builder.CreateString(call.DateTime)
+		incidentNumber := builder.CreateString(call.IncidentNumber)
+		latitude := builder.CreateString(call.Latitude)
+		longitude := builder.CreateString(call.Longitude)
+		tp := builder.CreateString(call.Type)
 
 		seattle.FireCallStart(builder)
 		seattle.FireCallAddAddress(builder, address)
@@ -26,33 +28,36 @@ func serialize(fireCalls []FireCall, policeCalls []PoliceCall) []byte {
 		seattle.FireCallAddLatitude(builder, latitude)
 		seattle.FireCallAddLongitude(builder, longitude)
 		seattle.FireCallAddType(builder, tp)
-		fire := seattle.FireCallEnd(builder)
-
-		builder.PrependUOffsetT(fire)
+		fire = append(fire, seattle.FireCallEnd(builder))
+	}
+	seattle.MessageStartFireCallsVector(builder, len(fireCalls))
+	for i := len(fire) - 1; i >= 0; i-- {
+		builder.PrependUOffsetT(fire[i])
 	}
 	fCalls := builder.EndVector(len(fireCalls))
 	// builder.Reset()
 
-	seattle.MessageStartPoliceCallsVector(builder, len(policeCalls))
-	for j := len(policeCalls) - 1; j >= 0; j-- {
-		atSceneTime := builder.CreateString(policeCalls[j].AtSceneTime)
-		cadCdwID := builder.CreateString(policeCalls[j].CADCDWID)
-		cadEventNumber := builder.CreateString(policeCalls[j].CADEventNumber)
-		censusTract := builder.CreateString(policeCalls[j].CensusTract)
-		districtSector := builder.CreateString(policeCalls[j].DistrictSector)
-		eventClearanceCode := builder.CreateString(policeCalls[j].EventClearanceCode)
-		eventClearanceDate := builder.CreateString(policeCalls[j].EventClearanceDate)
-		eventClearanceDescription := builder.CreateString(policeCalls[j].EventClearanceDescription)
-		eventClearanceGroup := builder.CreateString(policeCalls[j].EventClearanceGroup)
-		eventClearanceSubgroup := builder.CreateString(policeCalls[j].EventClearanceSubgroup)
-		generalOffenseNumber := builder.CreateString(policeCalls[j].GeneralOffenseNumber)
-		hundredBlockLocation := builder.CreateString(policeCalls[j].HundredBlockLocation)
-		initialTypeDescription := builder.CreateString(policeCalls[j].InitialTypeDescription)
-		initialTypeGroup := builder.CreateString(policeCalls[j].InitialTypeGroup)
-		initialTypeSubgroup := builder.CreateString(policeCalls[j].InitialTypeSubGroup)
-		latitude := builder.CreateString(policeCalls[j].Latitude)
-		longitude := builder.CreateString(policeCalls[j].Longitude)
-		zoneBeat := builder.CreateString(policeCalls[j].ZoneBeat)
+	fmt.Printf("\n\npoliceCalls:\n%+v", policeCalls)
+	police := []flatbuffers.UOffsetT{}
+	for _, call := range policeCalls {
+		atSceneTime := builder.CreateString(call.AtSceneTime)
+		cadCdwID := builder.CreateString(call.CADCDWID)
+		cadEventNumber := builder.CreateString(call.CADEventNumber)
+		censusTract := builder.CreateString(call.CensusTract)
+		districtSector := builder.CreateString(call.DistrictSector)
+		eventClearanceCode := builder.CreateString(call.EventClearanceCode)
+		eventClearanceDate := builder.CreateString(call.EventClearanceDate)
+		eventClearanceDescription := builder.CreateString(call.EventClearanceDescription)
+		eventClearanceGroup := builder.CreateString(call.EventClearanceGroup)
+		eventClearanceSubgroup := builder.CreateString(call.EventClearanceSubgroup)
+		generalOffenseNumber := builder.CreateString(call.GeneralOffenseNumber)
+		hundredBlockLocation := builder.CreateString(call.HundredBlockLocation)
+		initialTypeDescription := builder.CreateString(call.InitialTypeDescription)
+		initialTypeGroup := builder.CreateString(call.InitialTypeGroup)
+		initialTypeSubgroup := builder.CreateString(call.InitialTypeSubGroup)
+		latitude := builder.CreateString(call.Latitude)
+		longitude := builder.CreateString(call.Longitude)
+		zoneBeat := builder.CreateString(call.ZoneBeat)
 
 		seattle.PoliceCallStart(builder)
 		seattle.PoliceCallAddAtSceneTime(builder, atSceneTime)
@@ -73,23 +78,26 @@ func serialize(fireCalls []FireCall, policeCalls []PoliceCall) []byte {
 		seattle.PoliceCallAddLatitude(builder, latitude)
 		seattle.PoliceCallAddLongitude(builder, longitude)
 		seattle.PoliceCallAddZoneBeat(builder, zoneBeat)
-		police := seattle.PoliceCallEnd(builder)
-
-		builder.PrependUOffsetT(police)
+		police = append(police, seattle.PoliceCallEnd(builder))
+	}
+	seattle.MessageStartPoliceCallsVector(builder, len(policeCalls))
+	for i := len(police) - 1; i >= 0; i-- {
+		builder.PrependUOffsetT(police[i])
 	}
 	pCalls := builder.EndVector(len(policeCalls))
 	// builder.Reset()
+
 	date := builder.CreateString(strings.Split(fireCalls[0].DateTime, "T")[0])
 
 	seattle.MessageStart(builder)
 	seattle.MessageAddDate(builder, date)
 	seattle.MessageAddFireCalls(builder, fCalls)
-	seattle.MessageAddFireCalls(builder, pCalls)
+	seattle.MessageAddPoliceCalls(builder, pCalls)
 	msg := seattle.MessageEnd(builder)
 
 	builder.Finish(msg)
 	buf := builder.FinishedBytes()
 	fmt.Print(buf)
 
-	return buf
+	return buf, strings.Split(fireCalls[0].DateTime, "T")[0]
 }

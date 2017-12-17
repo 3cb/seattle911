@@ -16,85 +16,86 @@ import (
 
 func poll(db *bolt.DB, pool *ssc.SocketPool) {
 	ticker := time.NewTicker(time.Minute * 5)
-	f := &[]FireCall{}
-	p := &[]PoliceCall{}
+	f := []FireCall{}
+	p := []PoliceCall{}
 
-	err := updateFire(f)
+	f, err := updateFire()
 	if err != nil {
 		log.Printf("Unable to update fire calls: %v", err)
 	} else {
-		// log.Printf("Fire:\n%+v\n", f)
 		log.Printf("Fire updated")
 	}
-	err = updatePolice(p)
+	p, err = updatePolice()
 	if err != nil {
 		log.Printf("Unable to update police calls: %v", err)
 	} else {
-		// log.Printf("Police:\n%+v\n", p)
 		log.Printf("Police updated")
 	}
-	buf := serialize(*f, *p)
-	fmt.Print(buf)
+
+	buf, date := serialize(f, p)
+	fmt.Printf("=========================%v:\n\n%v\n\n", date, buf)
 
 	for {
 		<-ticker.C
-		err = updateFire(f)
+		f, err = updateFire()
 		if err != nil {
 			log.Printf("Unable to update fire calls: %v", err)
 		} else {
 			log.Printf("Fire updated")
-			// log.Printf("Fire:\n%+v\n", f)
 		}
-		err = updatePolice(p)
+		p, err = updatePolice()
 		if err != nil {
 			log.Printf("Unable to update police calls: %v", err)
 		} else {
 			log.Printf("Police updated")
-			// log.Printf("Police:\n%+v\n", p)
 		}
-		buf := serialize(*f, *p)
-		fmt.Print(buf)
+		buf, date := serialize(f, p)
+		fmt.Printf("=========================%v:\n\n%v\n\n", date, buf)
 	}
 }
 
-func updateFire(f *[]FireCall) error {
+func updateFire() ([]FireCall, error) {
+	f := []FireCall{}
+
 	t1, t2 := getDate(time.Now())
 	api := "https://data.seattle.gov/resource/grwu-wqtk.json?$where="
 	queryString := url.QueryEscape("datetime between '" + t1 + "' and '" + t2 + "'")
 	resp, err := http.Get(api + queryString)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer resp.Body.Close()
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	err = json.Unmarshal(data, f)
+	err = json.Unmarshal(data, &f)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return f, nil
 }
 
-func updatePolice(p *[]PoliceCall) error {
+func updatePolice() ([]PoliceCall, error) {
+	p := []PoliceCall{}
+
 	t1, t2 := getDate(time.Now())
 	api := "https://data.seattle.gov/resource/pu5n-trf4.json?$where="
 	queryString := url.QueryEscape("at_scene_time between '" + t1 + "' and '" + t2 + "'")
 	resp, err := http.Get(api + queryString)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer resp.Body.Close()
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	err = json.Unmarshal(data, p)
+	err = json.Unmarshal(data, &p)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return p, nil
 }
 
 func getDate(day time.Time) (string, string) {
@@ -103,12 +104,4 @@ func getDate(day time.Time) (string, string) {
 	t = strings.Split(fmt.Sprint(day.Add(time.Hour*24)), " ")
 	t2 := t[0] + "T00:00:00"
 	return t1, t2
-}
-
-func serializeFire() {
-
-}
-
-func serializePolice() {
-
 }
