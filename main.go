@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -46,14 +45,4 @@ func main() {
 
 	// start server
 	log.Fatal(http.ListenAndServe(":3030", r))
-}
-
-func createBucket(db *bolt.DB, name string) error {
-	return db.Update(func(tx *bolt.Tx) error {
-		_, err2 := tx.CreateBucketIfNotExists([]byte(name))
-		if err2 != nil {
-			return fmt.Errorf("Error creating bucket: %s", err2)
-		}
-		return nil
-	})
 }
