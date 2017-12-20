@@ -11,7 +11,9 @@ export default new Vuex.Store({
     mutations: {
         startWS(state) {
             state.ws = new WebSocket("ws://localhost:3030/ws")
+            state.ws.binaryType = 'arraybuffer'
             state.ws.onopen = event => {
+                console.log(event)
                 state.wsConnected = true
             }
         }

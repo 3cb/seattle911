@@ -3,41 +3,48 @@
 </template>
 
 <script>
-import xs from 'xstream'
+import xs from "xstream";
+var flatbuffers = require("../../node_modules/flatbuffers").flatbuffers;
+var seattle = require("../seattle/schema_generated.js").seattle;
 
 export default {
   data() {
-      return {
-          producer: {
-              start: (listener) => {
-                  this.$store.commit('startWS')
-                  this.$store.state.ws.onmessage = event => {
-                      listener.next(event)
-                  }
-              },
-              stop: () => {
-                  console.log("No longer listening to websocket.")
-              }
-          },
-          mainListener: {
-              next: value => {
-                  
-              },
-              error: err => {
-                  console.error("Error on main stream: ", err)
-              },
-              close: () => {
-                  console.log("No longer listening to main stream.")
-              }
-          }
+    return {
+      producer: {
+        start: listener => {
+          this.$store.commit("startWS");
+          this.$store.state.ws.onmessage = event => {
+            let bytes = new Uint8Array(event.data);
+            let buf = new flatbuffers.ByteBuffer(bytes);
+            let msg = seattle.Message.getRootAsMessage(buf);
+            listener.next(msg)
+          };
+        },
+        stop: () => {
+          console.log("No longer listening to websocket.");
+        }
+      },
+      mainListener: {
+        next: value => {
+          console.log(value);
+        },
+        error: err => {
+          console.error("Error on main stream: ", err);
+        },
+        close: () => {
+          console.log("No longer listening to main stream.");
+        }
       }
+    };
   },
   computed: {
-      main$() {
-          return xs.CreateWithMemory(this.producer)
-      }
+    main$() {
+      return xs.createWithMemory(this.producer);
+    }
   },
   mounted() {
+    this.main$.addListener(this.mainListener);
+
     mapboxgl.accessToken =
       "pk.eyJ1IjoibWFyY2NiIiwiYSI6ImNqYTR1enN2dGE0bWEyd3BhcTd6cnBzc3MifQ.Z4zYRzVCXv5zCqqdpgKZ-w";
     var map = new mapboxgl.Map({
