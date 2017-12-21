@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/gorilla/websocket"
 
@@ -47,23 +50,22 @@ func main() {
 
 	// handle websocket requests
 	upgrader := &websocket.Upgrader{}
-	r.Handle("/ws", wsHandler(wsp, upgrader))
+	r.Handle("/ws", wsHandler(db, wsp, upgrader))
 
 	// start server
 	log.Fatal(http.ListenAndServe(":3030", r))
 }
 
-func wsHandler(pool *ssc.SocketPool, upgrader *websocket.Upgrader) http.Handler {
+func wsHandler(db *bolt.DB, pool *ssc.SocketPool, upgrader *websocket.Upgrader) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		conn, err := upgrader.Upgrade(w, r, nil)
+		s, err := pool.AddClientSocket(upgrader, w, r)
 		if err != nil {
-			log.Printf("Unable to connect to new client via websocket.")
-			return
+			log.Printf("Unable to create client websocket connection: %v\n", err)
+		} else {
+			log.Printf("New websocket client connected.")
 		}
-		s := ssc.NewSocketInstance("", pool.Config)
-		s.Connection = conn
-		pool.ReadStack[s] = true
-		pool.WriteStack[s] = true
-		log.Printf("New client connected via websocket.")
+		date := strings.Split(fmt.Sprint(time.Now()), " ")[0]
+		buf := queryDB(db, date)
+		s.Connection.WriteMessage(2, buf)
 	})
 }
