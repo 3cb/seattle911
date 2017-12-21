@@ -26,3 +26,14 @@ func updateDB(db *bolt.DB, date string, msg []byte) error {
 		return nil
 	})
 }
+
+func queryDB(db *bolt.DB, date string) []byte {
+	buf := []byte{}
+	_ = db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("Messages"))
+		v := b.Get([]byte(date))
+		buf = append(buf, v...)
+		return nil
+	})
+	return buf
+}
