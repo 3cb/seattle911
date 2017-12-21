@@ -1,13 +1,11 @@
 package main
 
 import (
-	"strings"
-
 	"github.com/3cb/seattle911/seattle"
 	flatbuffers "github.com/google/flatbuffers/go"
 )
 
-func serialize(fireCalls []FireCall, policeCalls []PoliceCall) ([]byte, string) {
+func serialize(fireCalls []FireCall, policeCalls []PoliceCall, date string) []byte {
 	builder := flatbuffers.NewBuilder(1024)
 
 	fire := []flatbuffers.UOffsetT{}
@@ -82,10 +80,10 @@ func serialize(fireCalls []FireCall, policeCalls []PoliceCall) ([]byte, string) 
 	}
 	pCalls := builder.EndVector(len(policeCalls))
 
-	date := builder.CreateString(strings.Split(fireCalls[0].DateTime, "T")[0])
+	d := builder.CreateString(date)
 
 	seattle.MessageStart(builder)
-	seattle.MessageAddDate(builder, date)
+	seattle.MessageAddDate(builder, d)
 	seattle.MessageAddFireCalls(builder, fCalls)
 	seattle.MessageAddPoliceCalls(builder, pCalls)
 	msg := seattle.MessageEnd(builder)
@@ -93,5 +91,5 @@ func serialize(fireCalls []FireCall, policeCalls []PoliceCall) ([]byte, string) 
 	builder.Finish(msg)
 	buf := builder.FinishedBytes()
 
-	return buf, strings.Split(fireCalls[0].DateTime, "T")[0]
+	return buf
 }
