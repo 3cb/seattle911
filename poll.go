@@ -16,6 +16,7 @@ import (
 
 func poll(db *bolt.DB, pool *ssc.SocketPool) {
 	ticker := time.NewTicker(time.Minute * 5)
+	d := strings.Split(fmt.Sprint(time.Now()), " ")[0]
 	f := []FireCall{}
 	p := []PoliceCall{}
 
@@ -32,14 +33,16 @@ func poll(db *bolt.DB, pool *ssc.SocketPool) {
 		log.Printf("Police updated")
 	}
 
-	buf, date := serialize(f, p)
-	err = updateDB(db, date, buf)
+	buf := serialize(f, p, d)
+	err = updateDB(db, d, buf)
 	if err != nil {
 		log.Printf("Unable to save to database: %v\n", err)
 	}
+	pool.Pipes.InboundBytes <- ssc.Data{Type: 2, Payload: buf}
 
 	for {
-		<-ticker.C
+		date := <-ticker.C
+		d := strings.Split(fmt.Sprint(date), " ")[0]
 		f, err = updateFire()
 		if err != nil {
 			log.Printf("Unable to update fire calls: %v", err)
@@ -52,11 +55,12 @@ func poll(db *bolt.DB, pool *ssc.SocketPool) {
 		} else {
 			log.Printf("Police updated")
 		}
-		buf, date := serialize(f, p)
-		err = updateDB(db, date, buf)
+		buf := serialize(f, p, d)
+		err = updateDB(db, d, buf)
 		if err != nil {
 			log.Printf("Unable to save to database: %v\n", err)
 		}
+		pool.Pipes.InboundBytes <- ssc.Data{Type: 2, Payload: buf}
 	}
 }
 
