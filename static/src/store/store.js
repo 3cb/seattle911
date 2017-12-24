@@ -17,14 +17,15 @@ export default new Vuex.Store({
                 fire: [],
                 police: []
             }
-        }
+        },
+
+        features: []
     },
     mutations: {
         startWS(state) {
             state.ws = new WebSocket("ws://localhost:3030/ws")
             state.ws.binaryType = 'arraybuffer'
             state.ws.onopen = event => {
-                console.log(event)
                 state.wsConnected = true
             }
         },
@@ -41,7 +42,7 @@ export default new Vuex.Store({
                     type: msg.fireCalls(i).type()
                 })
             }
-            console.log(state.calls.today.fire)
+            console.log("fire", state.calls.today.fire)
 
             state.calls.today.police = []
             var lenPolice = msg.policeCallsLength()
@@ -67,7 +68,37 @@ export default new Vuex.Store({
                     zoneBeat: msg.policeCalls(i).zoneBeat()
                 })
             }
-            console.log(state.calls.today.police)
+            console.log("police", state.calls.today.police)
+        },
+        updateFeatures(state) {
+            state.features = []
+            for (let i = 0; i < state.calls.today.fire.length; i++) {
+                state.features.push({
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [parseFloat(state.calls.today.fire[i].longitude), parseFloat(state.calls.today.fire[i].latitude)]
+                    },
+                    "properties": {
+                        "icon": "circle"
+                    }
+                })
+            }
+
+            for (let i = 0; i < state.calls.today.police.length; i++) {
+                state.features.push({
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [parseFloat(state.calls.today.police[i].longitude), parseFloat(state.calls.today.police[i].latitude)]
+                    },
+                    "properties": {
+                        "icon": "circle"
+                    }
+                })
+            }
+
+            console.log("features", state.features)
         }
     }
 })
