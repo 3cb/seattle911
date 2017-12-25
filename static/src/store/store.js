@@ -19,7 +19,10 @@ export default new Vuex.Store({
             }
         },
 
-        features: []
+        features: {
+            fire: [],
+            police: []
+        }
     },
     mutations: {
         startWS(state) {
@@ -71,33 +74,35 @@ export default new Vuex.Store({
             console.log("police", state.calls.today.police)
         },
         updateFeatures(state) {
-            state.features = []
+            state.features.fire = []
             for (let i = 0; i < state.calls.today.fire.length; i++) {
-                state.features.push({
+                state.features.fire.push({
                     "type": "Feature",
                     "geometry": {
                         "type": "Point",
                         "coordinates": [parseFloat(state.calls.today.fire[i].longitude), parseFloat(state.calls.today.fire[i].latitude)]
-                    },
-                    "properties": {
-                        "icon": "circle"
                     }
+                    // "properties": {
+                    //     "icon": "circle",
+                    //     "color": '#F7455D'
+                    // }
                 })
             }
 
+            state.features.police = []
             for (let i = 0; i < state.calls.today.police.length; i++) {
-                state.features.push({
+                state.features.police.push({
                     "type": "Feature",
                     "geometry": {
                         "type": "Point",
                         "coordinates": [parseFloat(state.calls.today.police[i].longitude), parseFloat(state.calls.today.police[i].latitude)]
-                    },
-                    "properties": {
-                        "icon": "circle"
                     }
+                    // "properties": {
+                    //     "icon": "circle",
+                    //     "color": '#33C9EB'
+                    // }
                 })
             }
-
             console.log("features", state.features)
         }
     }

@@ -51,16 +51,25 @@ export default {
     calls() {
       return this.$store.state.calls;
     },
-    features() {
-      return this.$store.state.features;
+    ffeatures() {
+      return this.$store.state.features.fire;
+    },
+    pfeatures() {
+        return this.$store.state.features.police;
     }
   },
   watch: {
-      features(ft) {
-        this.map.getSource("calls").setData({
+      ffeatures(fft) {
+        this.map.getSource("fcalls").setData({
           "type": "FeatureCollection",
-          "features": ft
+          "features": fft
         });
+      },
+      pfeatures(pft) {
+          this.map.getSource("pcalls").setData({
+              "type": "FeatureCollection",
+              "features": pft
+          })
       }
   },
   mounted() {
@@ -87,25 +96,39 @@ export default {
                 let message = seattle.Message.getRootAsMessage(buf);
                 this.$store.commit('updateCalls', message)
                 this.$store.commit("updateFeatures");
-                this.map.addSource('calls', {
+                this.map.addSource('fcalls', {
                     "type": "geojson",
                     "data": {
                         "type": "FeatureCollection",
-                        "features": this.features
+                        "features": this.ffeatures
+                    }
+                })
+                this.map.addSource('pcalls', {
+                    "type": "geojson",
+                    "data": {
+                        "type": "FeatureCollection",
+                        "features": this.pfeatures
                     }
                 })
                 this.map.addLayer({
-                    "id": "911",
-                    "type": "symbol",
-                    "source": 'calls',
-                    "layout": {
-                        "icon-image": "{icon}-15",
-                        "text-field": "{title}",
-                        "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-                        "text-offset": [0, 0.6],
-                        "text-anchor": "top"
+                    "id": "fire",
+                    "type": "circle",
+                    "source": "fcalls",
+                    "paint": {
+                        "circle-radius": 6,
+                        "circle-color": "#B42222"
                     }
                 });
+                this.map.addLayer({
+                    "id": "police",
+                    "type": "circle",
+                    "source": "pcalls",
+                    "paint": {
+                        "circle-radius": 6,
+                        "circle-color": "#034cc1"
+                    }
+                    
+                })
             })
             .catch(error => {
                 console.error(error)
