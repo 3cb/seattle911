@@ -82,10 +82,6 @@ export default new Vuex.Store({
                         "type": "Point",
                         "coordinates": [parseFloat(state.calls.today.fire[i].longitude), parseFloat(state.calls.today.fire[i].latitude)]
                     }
-                    // "properties": {
-                    //     "icon": "circle",
-                    //     "color": '#F7455D'
-                    // }
                 })
             }
 
@@ -97,10 +93,6 @@ export default new Vuex.Store({
                         "type": "Point",
                         "coordinates": [parseFloat(state.calls.today.police[i].longitude), parseFloat(state.calls.today.police[i].latitude)]
                     }
-                    // "properties": {
-                    //     "icon": "circle",
-                    //     "color": '#33C9EB'
-                    // }
                 })
             }
             console.log("features", state.features)
