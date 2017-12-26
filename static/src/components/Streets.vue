@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import xs from "xstream";
 var flatbuffers = require("../../node_modules/flatbuffers").flatbuffers;
 var seattle = require("../seattle/schema_generated.js").seattle;
 import axios from 'axios'
@@ -12,45 +11,10 @@ import moment from 'moment'
 export default {
   data() {
     return {
-      map: null,
-      producer: {
-        start: listener => {
-          this.$store.commit("startWS");
-          this.$store.state.ws.onmessage = event => {
-            let bytes = new Uint8Array(event.data);
-            let buf = new flatbuffers.ByteBuffer(bytes);
-            let message = seattle.Message.getRootAsMessage(buf);
-            listener.next(message);
-          };
-        },
-        stop: () => {
-          console.log("No longer listening to websocket.");
-        }
-      },
-      updateListener: {
-        next: message => {
-          this.$store.commit("updateCalls", message);
-          this.$store.commit("updateFeatures");
-        },
-        error: err => {
-          console.error("Error on main stream: ", err);
-        },
-        close: () => {
-          console.log("No longer listening to main stream.");
-        }
-      }
+      map: null
     };
   },
   computed: {
-    main$() {
-      return xs.createWithMemory(this.producer);
-    },
-    update$() {
-      return xs.from(this.main$);
-    },
-    calls() {
-      return this.$store.state.calls;
-    },
     ffeatures() {
       return this.$store.state.features.fire;
     },
@@ -73,8 +37,6 @@ export default {
       }
   },
   mounted() {
-    this.main$.addListener(this.updateListener);
-
     mapboxgl.accessToken =
       "pk.eyJ1IjoibWFyY2NiIiwiYSI6ImNqYTR1enN2dGE0bWEyd3BhcTd6cnBzc3MifQ.Z4zYRzVCXv5zCqqdpgKZ-w";
     this.map = new mapboxgl.Map({
