@@ -124,6 +124,8 @@ export default {
       center: [-122.335167, 47.608013],
       zoom: 10.75
     });
+    // Add zoom and rotation controls to the map.
+    this.map.addControl(new mapboxgl.NavigationControl());
 
     this.map.on("load", () => {
       axios({
