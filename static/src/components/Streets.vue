@@ -20,7 +20,26 @@ export default {
     return {
       map: null,
       showPolice: true,
-      showFire: true
+      showFire: true,
+
+      fireLayer: {
+        id: "fire",
+        type: "circle",
+        source: "fcalls",
+        paint: {
+          "circle-radius": 6,
+          "circle-color": "#B42222"
+        }
+      },
+      policeLayer: {
+        id: "police",
+        type: "circle",
+        source: "pcalls",
+        paint: {
+          "circle-radius": 6,
+          "circle-color": "#034cc1"
+        }
+      }
     };
   },
   computed: {
@@ -88,24 +107,8 @@ export default {
               features: this.pfeatures
             }
           });
-          this.map.addLayer({
-            id: "fire",
-            type: "circle",
-            source: "fcalls",
-            paint: {
-              "circle-radius": 6,
-              "circle-color": "#B42222"
-            }
-          });
-          this.map.addLayer({
-            id: "police",
-            type: "circle",
-            source: "pcalls",
-            paint: {
-              "circle-radius": 6,
-              "circle-color": "#034cc1"
-            }
-          });
+          this.map.addLayer(this.fireLayer);
+          this.map.addLayer(this.policeLayer);
 
           var popupFire = new mapboxgl.Popup({
             closeButton: false,
@@ -158,15 +161,7 @@ export default {
       if (this.showFire === true) {
         this.map.removeLayer("fire");
       } else {
-        this.map.addLayer({
-          id: "fire",
-          type: "circle",
-          source: "fcalls",
-          paint: {
-            "circle-radius": 6,
-            "circle-color": "#B42222"
-          }
-        });
+        this.map.addLayer(this.fireLayer);
       }
       this.showFire = !this.showFire;
     },
@@ -174,15 +169,7 @@ export default {
       if (this.showPolice === true) {
         this.map.removeLayer("police");
       } else {
-        this.map.addLayer({
-          id: "police",
-          type: "circle",
-          source: "pcalls",
-          paint: {
-            "circle-radius": 6,
-            "circle-color": "#034cc1"
-          }
-        });
+        this.map.addLayer(this.policeLayer);
       }
       this.showPolice = !this.showPolice;
     }
@@ -229,7 +216,7 @@ body {
 
 .sb-fire {
   color: white;
-  background-color: #B42222;
+  background-color: #b42222;
 }
 .sb-fire:hover {
   color: white;

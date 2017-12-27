@@ -24,73 +24,73 @@ export default {
       showPolice: true,
 
       fireLayer: {
-            id: "fire-heat",
-            type: "heatmap",
-            source: "fcalls",
-            paint: {
-              "heatmap-weight": {
-                type: "exponential",
-                stops: [[0, 0], [6, 1]]
-              },
-              "heatmap-intensity": {
-                stops: [[0, 1], [9, 3]]
-              },
-              "heatmap-color": [
-                "interpolate",
-                ["linear"],
-                ["heatmap-density"],
-                0,
-                "rgba(33,102,172,0)",
-                0.2,
-                "rgb(103,169,207)",
-                0.4,
-                "rgb(209,229,240)",
-                0.6,
-                "rgb(253,219,199)",
-                0.8,
-                "rgb(239,138,98)",
-                1,
-                "rgb(178,24,43)"
-              ],
-              "heatmap-radius": {
-                stops: [[0, 2], [9, 20]]
-              }
-            }
+        id: "fire-heat",
+        type: "heatmap",
+        source: "fcalls",
+        paint: {
+          "heatmap-weight": {
+            type: "exponential",
+            stops: [[0, 0], [6, 1]]
           },
-          policeLayer: {
-            id: "police-heat",
-            type: "heatmap",
-            source: "pcalls",
-            paint: {
-              "heatmap-weight": {
-                type: "exponential",
-                stops: [[0, 0], [6, 1]]
-              },
-              "heatmap-intensity": {
-                stops: [[0, 1], [9, 3]]
-              },
-              "heatmap-color": [
-                "interpolate",
-                ["linear"],
-                ["heatmap-density"],
-                0,
-                "rgba(33,102,172,0)",
-                0.2,
-                "rgb(103,169,207)",
-                0.4,
-                "rgb(209,229,240)",
-                0.6,
-                "#eff3ff",
-                0.8,
-                "#9ecae1",
-                1,
-                "#08519c"
-              ],
-              "heatmap-radius": {
-                stops: [[0, 2], [9, 20]]
-              }
-            }
+          "heatmap-intensity": {
+            stops: [[0, 1], [9, 3]]
+          },
+          "heatmap-color": [
+            "interpolate",
+            ["linear"],
+            ["heatmap-density"],
+            0,
+            "rgba(33,102,172,0)",
+            0.2,
+            "rgb(103,169,207)",
+            0.4,
+            "rgb(209,229,240)",
+            0.6,
+            "rgb(253,219,199)",
+            0.8,
+            "rgb(239,138,98)",
+            1,
+            "rgb(178,24,43)"
+          ],
+          "heatmap-radius": {
+            stops: [[0, 2], [9, 20]]
           }
+        }
+      },
+      policeLayer: {
+        id: "police-heat",
+        type: "heatmap",
+        source: "pcalls",
+        paint: {
+          "heatmap-weight": {
+            type: "exponential",
+            stops: [[0, 0], [6, 1]]
+          },
+          "heatmap-intensity": {
+            stops: [[0, 1], [9, 3]]
+          },
+          "heatmap-color": [
+            "interpolate",
+            ["linear"],
+            ["heatmap-density"],
+            0,
+            "rgba(33,102,172,0)",
+            0.2,
+            "rgb(103,169,207)",
+            0.4,
+            "rgb(209,229,240)",
+            0.6,
+            "#eff3ff",
+            0.8,
+            "#9ecae1",
+            1,
+            "#08519c"
+          ],
+          "heatmap-radius": {
+            stops: [[0, 2], [9, 20]]
+          }
+        }
+      }
     };
   },
   computed: {
