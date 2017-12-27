@@ -135,11 +135,11 @@ export default {
                       "interpolate",
                       ["linear"],
                       ["heatmap-density"],
-                      0, "#eff3ff",
-                      0.2, "#c6dbef",
-                      0.4, "#9ecae1",
-                      0.6, "#6baed6",
-                      0.8, "#3182bd",
+                      0, "rgba(33,102,172,0)",
+                      0.2, "rgb(103,169,207)",
+                      0.4, "rgb(209,229,240)",
+                      0.6, "#eff3ff",
+                      0.8, "#9ecae1",
                       1, "#08519c"
                   ],
                    "heatmap-radius": {
