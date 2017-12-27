@@ -1,5 +1,12 @@
 <template>
-    <div id='heatmap'></div>
+    <div>
+        <div class="sb">
+            <a class="button is-rounded sb-style" @click="toggleStyle">Toggle Style</a>
+            <a class="button is-rounded sb-fire" @click="toggleFire">Toggle Fire</a>
+            <a class="button is-rounded sb-police" @click="togglePolice">Toggle Police</a>
+        </div>
+        <div id='heatmap'></div>
+    </div>
 </template>
 
 <script>
@@ -11,7 +18,9 @@ import moment from "moment";
 export default {
   data() {
     return {
-      map: null
+      map: null,
+      showFire: true,
+      showPolice: true
     };
   },
   computed: {
@@ -81,88 +90,169 @@ export default {
             type: "heatmap",
             source: "fcalls",
             paint: {
-                   "heatmap-weight": {
-                      "type": "exponential",
-                      "stops": [
-                          [0, 0],
-                          [6, 1]
-                      ]
-                  },
-                  "heatmap-intensity": {
-                      "stops": [
-                          [0, 1],
-                          [9, 3]
-                      ]
-                  },
-                  "heatmap-color": [
-                      "interpolate",
-                      ["linear"],
-                      ["heatmap-density"],
-                      0, "rgba(33,102,172,0)",
-                      0.2, "rgb(103,169,207)",
-                      0.4, "rgb(209,229,240)",
-                      0.6, "rgb(253,219,199)",
-                      0.8, "rgb(239,138,98)",
-                      1, "rgb(178,24,43)"
-                  ],
-                   "heatmap-radius": {
-                      "stops": [
-                          [0, 2],
-                          [9, 20]
-                      ]
-                  },
+              "heatmap-weight": {
+                type: "exponential",
+                stops: [[0, 0], [6, 1]]
+              },
+              "heatmap-intensity": {
+                stops: [[0, 1], [9, 3]]
+              },
+              "heatmap-color": [
+                "interpolate",
+                ["linear"],
+                ["heatmap-density"],
+                0,
+                "rgba(33,102,172,0)",
+                0.2,
+                "rgb(103,169,207)",
+                0.4,
+                "rgb(209,229,240)",
+                0.6,
+                "rgb(253,219,199)",
+                0.8,
+                "rgb(239,138,98)",
+                1,
+                "rgb(178,24,43)"
+              ],
+              "heatmap-radius": {
+                stops: [[0, 2], [9, 20]]
+              }
             }
           });
           this.map.addLayer({
-              "id": "police-heat",
-              "type":"heatmap",
-              "source": "pcalls",
-              "paint": {
-                  "heatmap-weight": {
-                      "type": "exponential",
-                      "stops": [
-                          [0, 0],
-                          [6, 1]
-                      ]
-                  },
-                  "heatmap-intensity": {
-                      "stops": [
-                          [0, 1],
-                          [9, 3]
-                      ]
-                  },
-                "heatmap-color": [
-                      "interpolate",
-                      ["linear"],
-                      ["heatmap-density"],
-                      0, "rgba(33,102,172,0)",
-                      0.2, "rgb(103,169,207)",
-                      0.4, "rgb(209,229,240)",
-                      0.6, "#eff3ff",
-                      0.8, "#9ecae1",
-                      1, "#08519c"
-                  ],
-                   "heatmap-radius": {
-                      "stops": [
-                          [0, 2],
-                          [9, 20]
-                      ]
-                  }
+            id: "police-heat",
+            type: "heatmap",
+            source: "pcalls",
+            paint: {
+              "heatmap-weight": {
+                type: "exponential",
+                stops: [[0, 0], [6, 1]]
+              },
+              "heatmap-intensity": {
+                stops: [[0, 1], [9, 3]]
+              },
+              "heatmap-color": [
+                "interpolate",
+                ["linear"],
+                ["heatmap-density"],
+                0,
+                "rgba(33,102,172,0)",
+                0.2,
+                "rgb(103,169,207)",
+                0.4,
+                "rgb(209,229,240)",
+                0.6,
+                "#eff3ff",
+                0.8,
+                "#9ecae1",
+                1,
+                "#08519c"
+              ],
+              "heatmap-radius": {
+                stops: [[0, 2], [9, 20]]
               }
-          })
+            }
+          });
         })
         .catch(error => {
           console.error(error);
         });
     });
+  },
+  methods: {
+    toggleStyle() {
+      this.$store.commit("toggleStyle");
+    },
+    toggleFire() {
+      if (this.showFire === true) {
+        this.map.removeLayer("fire-heat");
+      } else {
+        this.map.addLayer({
+          id: "fire-heat",
+          type: "heatmap",
+          source: "fcalls",
+          paint: {
+            "heatmap-weight": {
+              type: "exponential",
+              stops: [[0, 0], [6, 1]]
+            },
+            "heatmap-intensity": {
+              stops: [[0, 1], [9, 3]]
+            },
+            "heatmap-color": [
+              "interpolate",
+              ["linear"],
+              ["heatmap-density"],
+              0,
+              "rgba(33,102,172,0)",
+              0.2,
+              "rgb(103,169,207)",
+              0.4,
+              "rgb(209,229,240)",
+              0.6,
+              "rgb(253,219,199)",
+              0.8,
+              "rgb(239,138,98)",
+              1,
+              "rgb(178,24,43)"
+            ],
+            "heatmap-radius": {
+              stops: [[0, 2], [9, 20]]
+            }
+          }
+        });
+      }
+      this.showFire = !this.showFire;
+    },
+    togglePolice() {
+      if (this.showPolice === true) {
+        this.map.removeLayer("police-heat");
+      } else {
+        this.map.addLayer({
+          id: "police-heat",
+          type: "heatmap",
+          source: "pcalls",
+          paint: {
+            "heatmap-weight": {
+              type: "exponential",
+              stops: [[0, 0], [6, 1]]
+            },
+            "heatmap-intensity": {
+              stops: [[0, 1], [9, 3]]
+            },
+            "heatmap-color": [
+              "interpolate",
+              ["linear"],
+              ["heatmap-density"],
+              0,
+              "rgba(33,102,172,0)",
+              0.2,
+              "rgb(103,169,207)",
+              0.4,
+              "rgb(209,229,240)",
+              0.6,
+              "#eff3ff",
+              0.8,
+              "#9ecae1",
+              1,
+              "#08519c"
+            ],
+            "heatmap-radius": {
+              stops: [[0, 2], [9, 20]]
+            }
+          }
+        });
+      }
+      this.showPolice = !this.showPolice;
+    }
   }
 };
 </script>
 
 <style>
 body {
-    margin:0;
-    padding:0;
+  margin: 0;
+  padding: 0;
 }
 
 #heatmap {

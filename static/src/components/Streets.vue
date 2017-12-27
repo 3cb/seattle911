@@ -1,5 +1,12 @@
 <template>
-    <div id='map'></div>
+    <div>
+      <div class="sb">
+        <a class="button is-rounded sb-style" @click="toggleStyle">Toggle Style</a>
+        <a class="button is-rounded sb-fire" @click="toggleFire">Toggle Fire</a>
+        <a class="button is-rounded sb-police" @click="togglePolice">Toggle Police</a>
+      </div>
+      <div id='map'></div>
+    </div>
 </template>
 
 <script>
@@ -11,7 +18,9 @@ import moment from "moment";
 export default {
   data() {
     return {
-      map: null
+      map: null,
+      showPolice: true,
+      showFire: true
     };
   },
   computed: {
@@ -103,12 +112,9 @@ export default {
             closeOnClick: false
           });
 
-          this.map.on("mouseenter", "fire", (e) => {
-            // Change the cursor style as a UI indicator.
+          this.map.on("mouseenter", "fire", e => {
             this.map.getCanvas().style.cursor = "pointer";
 
-            // Populate the popup and set its coordinates
-            // based on the feature found.
             popupFire
               .setLngLat(e.features[0].geometry.coordinates)
               .setHTML(e.features[0].properties.description)
@@ -125,12 +131,9 @@ export default {
             closeOnClick: false
           });
 
-          this.map.on("mouseenter", "police", (e) => {
-            // Change the cursor style as a UI indicator.
+          this.map.on("mouseenter", "police", e => {
             this.map.getCanvas().style.cursor = "pointer";
 
-            // Populate the popup and set its coordinates
-            // based on the feature found.
             popupPolice
               .setLngLat(e.features[0].geometry.coordinates)
               .setHTML(e.features[0].properties.description)
@@ -146,14 +149,51 @@ export default {
           console.error(error);
         });
     });
+  },
+  methods: {
+    toggleStyle() {
+      this.$store.commit("toggleStyle");
+    },
+    toggleFire() {
+      if (this.showFire === true) {
+        this.map.removeLayer("fire");
+      } else {
+        this.map.addLayer({
+          id: "fire",
+          type: "circle",
+          source: "fcalls",
+          paint: {
+            "circle-radius": 6,
+            "circle-color": "#B42222"
+          }
+        });
+      }
+      this.showFire = !this.showFire;
+    },
+    togglePolice() {
+      if (this.showPolice === true) {
+        this.map.removeLayer("police");
+      } else {
+        this.map.addLayer({
+          id: "police",
+          type: "circle",
+          source: "pcalls",
+          paint: {
+            "circle-radius": 6,
+            "circle-color": "#034cc1"
+          }
+        });
+      }
+      this.showPolice = !this.showPolice;
+    }
   }
 };
 </script>
 
 <style>
 body {
-    margin:0;
-    padding:0;
+  margin: 0;
+  padding: 0;
 }
 
 #map {
@@ -161,10 +201,47 @@ body {
   top: 0;
   bottom: 0;
   width: 100%;
+  z-index: 1;
 }
 
 .mapboxgl-popup {
   max-width: 400px;
   font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+.sb {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: 50px;
+  width: 400px;
+  z-index: 10;
+}
+
+.sb-style {
+  color: white;
+  background-color: #3273dc;
+}
+.sb-style:hover {
+  color: white;
+  background-color: #5188e1;
+}
+
+.sb-fire {
+  color: white;
+  background-color: #B42222;
+}
+.sb-fire:hover {
+  color: white;
+  background-color: #de5454;
+}
+
+.sb-police {
+  color: white;
+  background-color: #034cc1;
+}
+.sb-police:hover {
+  color: white;
+  background-color: #3682fc;
 }
 </style>

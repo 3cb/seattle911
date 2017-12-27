@@ -8,6 +8,10 @@ export default new Vuex.Store({
     ws: null,
     wsConnected: false,
 
+    ui: {
+      showStreets: true,
+    },
+
     calls: {
       today: {
         fire: [], // { address, datetime, incident_number, latitude, longitude, type }
@@ -32,6 +36,11 @@ export default new Vuex.Store({
         state.wsConnected = true
       }
     },
+
+    toggleStyle(state) {
+      state.ui.showStreets = !state.ui.showStreets
+    },
+   
     updateCalls(state, msg) {
       state.calls.today.fire = []
       var lenFire = msg.fireCallsLength()

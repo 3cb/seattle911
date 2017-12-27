@@ -1,8 +1,7 @@
 <template>
   <div id="app">
-    <!-- <sidebar></sidebar> -->
-    <streets></streets>
-    <!-- <heatmap></heatmap> -->
+    <streets v-if="showStreets"></streets>
+    <heatmap v-else></heatmap>
   </div>
 </template>
 
@@ -11,7 +10,6 @@ import xs from 'xstream'
 var flatbuffers = require("../node_modules/flatbuffers").flatbuffers;
 var seattle = require("./seattle/schema_generated.js").seattle;
 
-// import Sidebar from './components/Sidebar.vue'
 import Streets from './components/Streets.vue'
 import Heatmap from './components/Heatmap.vue'
 
@@ -48,6 +46,9 @@ export default {
     }
   },
   computed: {
+    showStreets() {
+      return this.$store.state.ui.showStreets
+    },
     main$() {
       return xs.createWithMemory(this.producer);
     },
@@ -59,7 +60,6 @@ export default {
       this.main$.addListener(this.updateListener);
   },
   components: {
-    // Sidebar,
     Streets,
     Heatmap
   }
