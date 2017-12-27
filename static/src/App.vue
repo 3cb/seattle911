@@ -2,16 +2,18 @@
   <div id="app">
     <!-- <sidebar></sidebar> -->
     <streets></streets>
+    <!-- <heatmap></heatmap> -->
   </div>
 </template>
 
 <script>
 import xs from 'xstream'
-var flatbuffers = require("../../node_modules/flatbuffers").flatbuffers;
-var seattle = require("../seattle/schema_generated.js").seattle;
+var flatbuffers = require("../node_modules/flatbuffers").flatbuffers;
+var seattle = require("./seattle/schema_generated.js").seattle;
 
-import Side from './components/Sidebar.vue'
-import Streets from './components/Mapbox.vue'
+// import Sidebar from './components/Sidebar.vue'
+import Streets from './components/Streets.vue'
+import Heatmap from './components/Heatmap.vue'
 
 export default {
   name: 'app',
@@ -57,8 +59,9 @@ export default {
       this.main$.addListener(this.updateListener);
   },
   components: {
-    Sidebar,
-    Streets
+    // Sidebar,
+    Streets,
+    Heatmap
   }
 }
 </script>
