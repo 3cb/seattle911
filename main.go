@@ -49,7 +49,7 @@ func main() {
 	upgrader := &websocket.Upgrader{}
 	r.Handle("/ws", wsHandler(db, wsp, upgrader))
 
-	r.Handle("/day/{date}", queryHandler(db))
+	r.Handle("/api/day/{date}", queryHandler(db))
 
 	// start server
 	log.Fatal(http.ListenAndServe(":3030", r))
