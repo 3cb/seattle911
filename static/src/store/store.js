@@ -54,7 +54,6 @@ export default new Vuex.Store({
           type: msg.fireCalls(i).type()
         })
       }
-      console.log("fire", state.calls.today.fire)
 
       state.calls.today.police = []
       var lenPolice = msg.policeCallsLength()
@@ -80,7 +79,6 @@ export default new Vuex.Store({
           zoneBeat: msg.policeCalls(i).zoneBeat()
         })
       }
-      console.log("police", state.calls.today.police)
     },
     updateFeatures(state) {
       state.features.fire = []
@@ -110,7 +108,6 @@ export default new Vuex.Store({
           }
         })
       }
-      console.log("features", state.features)
     }
   }
 })
