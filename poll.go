@@ -16,7 +16,8 @@ import (
 
 func poll(db *bolt.DB, pool *ssc.SocketPool) {
 	ticker := time.NewTicker(time.Minute * 5)
-	d := strings.Split(fmt.Sprint(time.Now()), " ")[0]
+	loc, _ := time.LoadLocation("America/Los_Angeles")
+	d := strings.Split(fmt.Sprint(time.Now().In(loc)), " ")[0]
 	f := []FireCall{}
 	p := []PoliceCall{}
 
@@ -41,8 +42,8 @@ func poll(db *bolt.DB, pool *ssc.SocketPool) {
 	pool.Pipes.InboundBytes <- ssc.Data{Type: 2, Payload: buf}
 
 	for {
-		date := <-ticker.C
-		d := strings.Split(fmt.Sprint(date), " ")[0]
+		<-ticker.C
+		d := strings.Split(fmt.Sprint(time.Now().In(loc)), " ")[0]
 		f, err = updateFire()
 		if err != nil {
 			log.Printf("Unable to update fire calls: %v", err)
@@ -67,7 +68,7 @@ func poll(db *bolt.DB, pool *ssc.SocketPool) {
 func updateFire() ([]FireCall, error) {
 	f := []FireCall{}
 
-	t1, t2 := getDate(time.Now())
+	t1, t2 := getDate()
 	api := "https://data.seattle.gov/resource/grwu-wqtk.json?$where="
 	queryString := url.QueryEscape("datetime between '" + t1 + "' and '" + t2 + "'")
 	resp, err := http.Get(api + queryString)
@@ -89,7 +90,7 @@ func updateFire() ([]FireCall, error) {
 func updatePolice() ([]PoliceCall, error) {
 	p := []PoliceCall{}
 
-	t1, t2 := getDate(time.Now())
+	t1, t2 := getDate()
 	api := "https://data.seattle.gov/resource/pu5n-trf4.json?$where="
 	queryString := url.QueryEscape("at_scene_time between '" + t1 + "' and '" + t2 + "'")
 	resp, err := http.Get(api + queryString)
@@ -108,10 +109,9 @@ func updatePolice() ([]PoliceCall, error) {
 	return p, nil
 }
 
-func getDate(day time.Time) (string, string) {
-	t := strings.Split(fmt.Sprint(day), " ")
-	t1 := t[0] + "T00:00:00"
-	t = strings.Split(fmt.Sprint(day.Add(time.Hour*24)), " ")
-	t2 := t[0] + "T00:00:00"
+func getDate() (string, string) {
+	loc, _ := time.LoadLocation("America/Los_Angeles")
+	t1 := strings.Split(fmt.Sprint(time.Now().In(loc)), " ")[0] + "T00:00:00"
+	t2 := strings.Split(fmt.Sprint(time.Now().In(loc).Add(time.Hour*24)), " ")[0] + "T00:00:00"
 	return t1, t2
 }
