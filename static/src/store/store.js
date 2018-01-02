@@ -40,7 +40,7 @@ export default new Vuex.Store({
     toggleStyle(state) {
       state.ui.showStreets = !state.ui.showStreets
     },
-   
+
     updateCalls(state, msg) {
       state.calls.today.fire = []
       var lenFire = msg.fireCallsLength()
