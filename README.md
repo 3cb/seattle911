@@ -2,9 +2,9 @@
 
 > Heatmap and Street View maps for Seattle, WA 911 calls
 
-> https://dev.socrata.com/foundry/data.seattle.gov/grwu-wqtk
+> Fire API Docs: https://dev.socrata.com/foundry/data.seattle.gov/grwu-wqtk
 
-> https://dev.socrata.com/foundry/data.seattle.gov/pu5n-trf4
+> Police API Docs: https://dev.socrata.com/foundry/data.seattle.gov/pu5n-trf4
 
 ## Build Setup
 for static files:
