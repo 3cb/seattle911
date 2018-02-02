@@ -39,7 +39,7 @@ func poll(db *bolt.DB, pool *ssc.SocketPool) {
 	if err != nil {
 		log.Printf("Unable to save to database: %v\n", err)
 	}
-	pool.Pipes.InboundBytes <- ssc.Data{Type: 2, Payload: buf}
+	pool.Pipes.Inbound <- ssc.Message{Type: 2, Payload: buf}
 
 	for {
 		<-ticker.C
@@ -61,7 +61,7 @@ func poll(db *bolt.DB, pool *ssc.SocketPool) {
 		if err != nil {
 			log.Printf("Unable to save to database: %v\n", err)
 		}
-		pool.Pipes.InboundBytes <- ssc.Data{Type: 2, Payload: buf}
+		pool.Pipes.Inbound <- ssc.Message{Type: 2, Payload: buf}
 	}
 }
 

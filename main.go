@@ -25,10 +25,9 @@ func main() {
 	defer db.Close()
 
 	// launch empty websocket pool
-	config := ssc.PoolConfig{
+	config := ssc.Config{
 		IsReadable: true,
 		IsWritable: true,
-		IsJSON:     false,
 	}
 	wsp, err := ssc.NewSocketPool(config)
 	if err != nil {
