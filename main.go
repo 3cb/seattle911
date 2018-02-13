@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
 
@@ -24,12 +25,7 @@ func main() {
 	}
 	defer db.Close()
 
-	// launch empty websocket pool
-	config := ssc.Config{
-		IsReadable: true,
-		IsWritable: true,
-	}
-	wsp, err := ssc.NewSocketPool(config)
+	wsp, err := ssc.NewSocketPool([]string{}, time.Second*0)
 	if err != nil {
 		log.Fatal("Unable to start pool to serve websocket connections.")
 	}
