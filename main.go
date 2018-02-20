@@ -25,7 +25,8 @@ func main() {
 	}
 	defer db.Close()
 
-	wsp, err := ssc.NewSocketPool([]string{}, time.Second*0)
+	wsp := ssc.NewPool([]string{}, time.Second*0)
+	err = wsp.Start()
 	if err != nil {
 		log.Fatal("Unable to start pool to serve websocket connections.")
 	}
@@ -50,9 +51,9 @@ func main() {
 	log.Fatal(http.ListenAndServe(":3030", r))
 }
 
-func wsHandler(db *bolt.DB, pool *ssc.SocketPool, upgrader *websocket.Upgrader) http.Handler {
+func wsHandler(db *bolt.DB, pool *ssc.Pool, upgrader *websocket.Upgrader) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, err := pool.AddClientSocket(upgrader, w, r)
+		err := pool.AddClientSocket("", upgrader, w, r)
 		if err != nil {
 			log.Printf("Unable to create client websocket connection: %v\n", err)
 		} else {
