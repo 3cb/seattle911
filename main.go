@@ -43,30 +43,9 @@ func main() {
 
 	// handle websocket requests
 	upgrader := &websocket.Upgrader{}
-	r.Handle("/ws", wsHandler(db, wsp, upgrader))
-
-	r.Handle("/api/day/{date}", queryHandler(db))
+	r.Handle("/ws", WS(db, wsp, upgrader))
+	r.Handle("/api/day/{date}", SingleDate(db))
 
 	// start server
 	log.Fatal(http.ListenAndServe(":3030", r))
-}
-
-func wsHandler(db *bolt.DB, pool *ssc.Pool, upgrader *websocket.Upgrader) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		err := pool.AddClientSocket("", upgrader, w, r)
-		if err != nil {
-			log.Printf("Unable to create client websocket connection: %v\n", err)
-		} else {
-			log.Printf("New websocket client connected.")
-		}
-	})
-}
-
-func queryHandler(db *bolt.DB) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		date := vars["date"]
-		buf := queryDB(db, date)
-		w.Write(buf)
-	})
 }
