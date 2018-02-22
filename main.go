@@ -5,12 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gorilla/websocket"
-
 	"github.com/3cb/ssc"
-
 	"github.com/boltdb/bolt"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 )
 
 func main() {
