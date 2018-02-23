@@ -9,7 +9,6 @@
 import xs from 'xstream'
 var flatbuffers = require("../node_modules/flatbuffers").flatbuffers;
 var seattle = require("./seattle/schema_generated.js").seattle;
-
 import Streets from './components/Streets.vue'
 import Heatmap from './components/Heatmap.vue'
 
@@ -33,8 +32,10 @@ export default {
       },
       updateListener: {
         next: message => {
-          this.$store.commit("updateCalls", message);
-          this.$store.commit("updateFeatures");
+          this.$store.commit("updateFeatures",{
+            msg: message,
+            type: 'today'
+          });
         },
         error: err => {
           console.error("Error on main stream: ", err);

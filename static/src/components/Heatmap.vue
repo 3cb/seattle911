@@ -13,7 +13,7 @@
 var flatbuffers = require("../../node_modules/flatbuffers").flatbuffers;
 var seattle = require("../seattle/schema_generated.js").seattle;
 import axios from "axios";
-import moment from "moment";
+import { DateTime } from 'luxon'
 
 export default {
   data() {
@@ -95,10 +95,18 @@ export default {
   },
   computed: {
     ffeatures() {
-      return this.$store.state.features.fire;
+    if (this.$store.state.ui.showToday === true) {
+        return this.$store.state.features.today.fire;
+      } else {
+        return this.$store.state.features.history.fire
+      }
     },
     pfeatures() {
-      return this.$store.state.features.police;
+      if (this.$store.state.ui.showToday === true) {
+        return this.$store.state.features.today.police;
+      } else {
+        return this.$store.state.features.history.police;
+      }
     }
   },
   watch: {
@@ -128,21 +136,16 @@ export default {
     this.map.addControl(new mapboxgl.NavigationControl());
 
     this.map.on("load", () => {
-      axios({
-        url:
-          "/api/day/" +
-          moment()
-            .format()
-            .split("T")[0],
-        method: "get",
-        responseType: "arraybuffer"
-      })
+      axios(this.createDayRequest(DateTime.local().setZone("America/Los_Angeles").toISODate()))
         .then(response => {
           let bytes = new Uint8Array(response.data);
           let buf = new flatbuffers.ByteBuffer(bytes);
           let message = seattle.Message.getRootAsMessage(buf);
-          this.$store.commit("updateCalls", message);
-          this.$store.commit("updateFeatures");
+          this.$store.commit("updateFeatures", {
+            msg: message,
+            type: 'today'
+          });
+          
           this.map.addSource("fcalls", {
             type: "geojson",
             data: {
@@ -168,6 +171,14 @@ export default {
   methods: {
     toggleStyle() {
       this.$store.commit("toggleStyle");
+    },
+    // takes ISODate string parameter (YYYY-MM-DD)
+    createDayRequest(date) {
+      return {
+        url: "/api/day/" + date,
+        method: "get",
+        responseType: "arraybuffer"
+      }
     },
     toggleFire() {
       if (this.showFire === true) {
