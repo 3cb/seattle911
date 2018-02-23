@@ -13,7 +13,8 @@
 var flatbuffers = require("../../node_modules/flatbuffers").flatbuffers;
 var seattle = require("../seattle/schema_generated.js").seattle;
 import axios from "axios";
-import moment from "moment";
+// import moment from "moment";
+import { DateTime } from 'luxon'
 
 export default {
   data() {
@@ -77,15 +78,7 @@ export default {
     this.map.addControl(new mapboxgl.NavigationControl());
 
     this.map.on("load", () => {
-      axios({
-        url:
-          "/api/day/" +
-          moment()
-            .format()
-            .split("T")[0],
-        method: "get",
-        responseType: "arraybuffer"
-      })
+      axios(this.createRequest())
         .then(response => {
           let bytes = new Uint8Array(response.data);
           let buf = new flatbuffers.ByteBuffer(bytes);
@@ -156,6 +149,13 @@ export default {
   methods: {
     toggleStyle() {
       this.$store.commit("toggleStyle");
+    },
+    createRequest() {
+      return {
+        url: "/api/day/" + DateTime.local().setZone("America/Los_Angeles").toISODate(),
+        method: "get",
+        responseType: "arraybuffer"
+      }
     },
     toggleFire() {
       if (this.showFire === true) {
