@@ -10,23 +10,19 @@ export default new Vuex.Store({
     wsProtocol: location.hostname === "localhost" ? "ws://" : "wss://",
 
     ui: {
-      showStreets: true,
-    },
-
-    calls: {
-      today: {
-        fire: [], // { address, datetime, incident_number, latitude, longitude, type }
-        police: [] // { at_scene_time, cad_cdw_id, cad_event_number, census_tract, district_sector, event_clearance_coe, event_clearance_date, event_clearance_description, event_clearance_group, event_clearance_subgroup, general_offense_number, hundred_block_location, initial_type_description, initial_type_group, initial_type_subgroup, latitude, longitude, zone_beat }
-      },
-      history: {
-        fire: [],
-        police: []
-      }
+      showToday: true,
+      showStreets: true
     },
 
     features: {
-      fire: [],
-      police: []
+      today: {
+        fire: [],
+        police: []
+      },
+      history : {
+        fire: [],
+        police: []
+      }
     }
   },
   mutations: {
@@ -42,72 +38,43 @@ export default new Vuex.Store({
       state.ui.showStreets = !state.ui.showStreets
     },
 
-    updateCalls(state, msg) {
-      state.calls.today.fire = []
-      var lenFire = msg.fireCallsLength()
-      for (let i = 0; i < lenFire; i++) {
-        state.calls.today.fire.push({
-          address: msg.fireCalls(i).address(),
-          datetime: msg.fireCalls(i).datetime(),
-          incidentNumber: msg.fireCalls(i).incidentNumber(),
-          latitude: msg.fireCalls(i).latitude(),
-          longitude: msg.fireCalls(i).longitude(),
-          type: msg.fireCalls(i).type()
-        })
-      }
-
-      state.calls.today.police = []
-      var lenPolice = msg.policeCallsLength()
-      for (let i = 0; i < lenPolice; i++) {
-        state.calls.today.police.push({
-          atSceneTime: msg.policeCalls(i).atSceneTime(),
-          cadCdwId: msg.policeCalls(i).cadCdwId(),
-          cadEventNumber: msg.policeCalls(i).cadEventNumber(),
-          censusTract: msg.policeCalls(i).censusTract(),
-          districtSector: msg.policeCalls(i).districtSector(),
-          eventClearanceCode: msg.policeCalls(i).eventClearanceCode(),
-          eventClearanceDate: msg.policeCalls(i).eventClearanceDate(),
-          eventClearanceDescription: msg.policeCalls(i).eventClearanceDescription(),
-          eventClearanceGroup: msg.policeCalls(i).eventClearanceGroup(),
-          eventClearanceSubgroup: msg.policeCalls(i).eventClearanceSubgroup(),
-          generalOffenseNumber: msg.policeCalls(i).generalOffenseNumber(),
-          hundredBlockLocation: msg.policeCalls(i).hundredBlockLocation(),
-          initialTypeDescription: msg.policeCalls(i).initialTypeDescription(),
-          initialTypeGroup: msg.policeCalls(i).initialTypeGroup(),
-          initialTypeSubgroup: msg.policeCalls(i).initialTypeSubgroup(),
-          latitude: msg.policeCalls(i).latitude(),
-          longitude: msg.policeCalls(i).longitude(),
-          zoneBeat: msg.policeCalls(i).zoneBeat()
-        })
-      }
-    },
-    updateFeatures(state) {
-      state.features.fire = []
-      for (let i = 0; i < state.calls.today.fire.length; i++) {
-        state.features.fire.push({
+    updateFeatures(state, { msg, type }) {
+      var fire = []
+      for (let i = 0; i < msg.fireCallsLength(); i++) {
+        fire.push({
           "type": "Feature",
           "properties": {
-            "description": "<strong>" + state.calls.today.fire[i].type.toUpperCase() + "</strong><p>Time: " + state.calls.today.fire[i].datetime.split("T")[1].split(".")[0] + "</p><p>Date: " + state.calls.today.fire[i].datetime.split("T")[0] + "</p><p>Location: " + state.calls.today.fire[i].address + "</p><p>Incident #: " + state.calls.today.fire[i].incidentNumber + "</p>"
+            "description": "<strong>" + msg.fireCalls(i).type().toUpperCase() + "</strong><p>Time: " + msg.fireCalls(i).datetime().split("T")[1].split(".")[0] + "</p><p>Date: " + msg.fireCalls(i).datetime().split("T")[0] + "</p><p>Location: " + msg.fireCalls(i).address() + "</p><p>Incident #: " + msg.fireCalls(i).incidentNumber() + "</p>"
           },
           "geometry": {
             "type": "Point",
-            "coordinates": [parseFloat(state.calls.today.fire[i].longitude), parseFloat(state.calls.today.fire[i].latitude)]
+            "coordinates": [parseFloat(msg.fireCalls(i).longitude()), parseFloat(msg.fireCalls(i).latitude())]
           }
         })
       }
 
-      state.features.police = []
-      for (let i = 0; i < state.calls.today.police.length; i++) {
-        state.features.police.push({
+      var police = []
+      for (let i = 0; i < msg.policeCallsLength(); i++) {
+        police.push({
           "type": "Feature",
           "properties": {
-              "description": "<strong>" + state.calls.today.police[i].initialTypeDescription.toUpperCase() + "</strong><p>At Scene Time: " + state.calls.today.police[i].atSceneTime.split("T")[1].split(".")[0] + "</p><p>Date: " + state.calls.today.police[i].atSceneTime.split("T")[0] + "</p><p>Location: " + state.calls.today.police[i].hundredBlockLocation + "</p><p>Event #: " + state.calls.today.police[i].cadEventNumber + "</p>"
+              "description": "<strong>" + msg.policeCalls(i).initialTypeDescription().toUpperCase() + "</strong><p>At Scene Time: " + msg.policeCalls(i).atSceneTime().split("T")[1].split(".")[0] + "</p><p>Date: " + msg.policeCalls(i).atSceneTime().split("T")[0] + "</p><p>Location: " + msg.policeCalls(i).hundredBlockLocation() + "</p><p>Event #: " + msg.policeCalls(i).cadEventNumber() + "</p>"
           },
           "geometry": {
             "type": "Point",
-            "coordinates": [parseFloat(state.calls.today.police[i].longitude), parseFloat(state.calls.today.police[i].latitude)]
+            "coordinates": [parseFloat(msg.policeCalls(i).longitude()), parseFloat(msg.policeCalls(i).latitude())]
           }
         })
+      }
+      console.log(fire)
+      console.log(police)
+
+      if (type === 'today') {
+        state.features.today.fire = fire
+        state.features.today.police = police
+      } else if (type === 'history') {
+        state.features.history.fire = fire
+        state.features.history.police = police
       }
     }
   }
