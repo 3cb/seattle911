@@ -11,7 +11,9 @@ export default new Vuex.Store({
 
     ui: {
       showToday: true,
-      showStreets: true
+      showStreets: true,
+      showDatePicker: false,
+      pickerText: 'Show Date Picker'
     },
 
     features: {
@@ -19,7 +21,8 @@ export default new Vuex.Store({
         fire: [],
         police: []
       },
-      history : {
+      history: {
+        type: '', // 'single' or 'range'
         fire: [],
         police: []
       }

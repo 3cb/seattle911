@@ -1,15 +1,28 @@
 <template>
     <div>
-      <div class="sb">
-        <a class="button is-rounded sb-style" @click="toggleStyle">Toggle Style</a>
-        <a class="button is-rounded sb-fire" @click="toggleFire">Toggle Fire</a>
-        <a class="button is-rounded sb-police" @click="togglePolice">Toggle Police</a>
+      <div class="columns is-multiline is-gapless sb">
+        <div class="column is-4">
+          <a class="button is-rounded sb-style" @click="toggleStyle">Toggle Style</a>
+        </div>
+        <div class="column is-4">
+          <a class="button is-rounded sb-fire" @click="toggleFire">Toggle Fire</a>
+        </div>
+        <div class="column is-4">
+          <a class="button is-rounded sb-police" @click="togglePolice">Toggle Police</a>
+        </div>
+        <div class="column is-12">
+          <a class="button is-rounded sb-date" @click="toggleDatePicker">{{ pickerText }}</a>
+        </div>
+        <div class="column is-12">
+          <date-picker v-show="showDatePicker"></date-picker>
+        </div>
       </div>
       <div id='map'></div>
     </div>
 </template>
 
 <script>
+import DatePicker from "./DatePicker.vue";
 var flatbuffers = require("../../node_modules/flatbuffers").flatbuffers;
 var seattle = require("../seattle/schema_generated.js").seattle;
 import axios from "axios";
@@ -43,6 +56,12 @@ export default {
     };
   },
   computed: {
+    showDatePicker() {
+      return this.$store.state.ui.showDatePicker;
+    },
+    pickerText() {
+      return this.$store.state.ui.pickerText;
+    },
     ffeatures() {
       if (this.$store.state.ui.showToday === true) {
         return this.$store.state.features.today.fire;
@@ -182,7 +201,13 @@ export default {
         this.map.addLayer(this.policeLayer);
       }
       this.showPolice = !this.showPolice;
+    },
+    toggleDatePicker() {
+      this.$store.commit("toggleDatePicker");
     }
+  },
+  components: {
+    DatePicker
   }
 };
 </script>
@@ -211,11 +236,12 @@ body {
   top: 0;
   bottom: 0;
   height: 50px;
-  width: 400px;
+  width: 360px;
   z-index: 10;
 }
 
 .sb-style {
+  width: 100%;
   color: white;
   background-color: #3273dc;
 }
@@ -225,6 +251,7 @@ body {
 }
 
 .sb-fire {
+  width: 100%;
   color: white;
   background-color: #b42222;
 }
@@ -234,11 +261,22 @@ body {
 }
 
 .sb-police {
+  width: 100%;
   color: white;
   background-color: #034cc1;
 }
 .sb-police:hover {
   color: white;
   background-color: #3682fc;
+}
+
+.sb-date {
+  width: 100%;
+  color: hsl(0, 0%, 21%);
+  background-color: hsl(0, 0%, 96%);
+}
+.sb-date:hover {
+  color: hsl(0, 0%, 96%);
+  background-color: hsl(0, 0%, 21%);
 }
 </style>
