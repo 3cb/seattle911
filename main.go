@@ -5,12 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gorilla/websocket"
-
 	"github.com/3cb/ssc"
-
 	"github.com/boltdb/bolt"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 )
 
 func main() {
@@ -25,14 +23,14 @@ func main() {
 	}
 	defer db.Close()
 
-	wsp := ssc.NewPool([]string{}, time.Second*0)
-	err = wsp.Start()
+	pool := ssc.NewPool([]string{}, time.Second*0)
+	err = pool.Start()
 	if err != nil {
 		log.Fatal("Unable to start pool to serve websocket connections.")
 	}
 
 	// start 5 minute polling goroutine
-	go poll(db, wsp)
+	go poll(db, pool)
 
 	// create new router instance
 	r := mux.NewRouter()
@@ -43,7 +41,7 @@ func main() {
 
 	// handle websocket requests
 	upgrader := &websocket.Upgrader{}
-	r.Handle("/ws", WS(db, wsp, upgrader))
+	r.Handle("/ws", WS(db, pool, upgrader))
 	r.Handle("/api/day/{date}", SingleDate(db))
 
 	// start server
