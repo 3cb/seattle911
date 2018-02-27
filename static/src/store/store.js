@@ -28,6 +28,7 @@ export default new Vuex.Store({
       }
     }
   },
+  
   mutations: {
     startWS(state) {
       state.ws = new WebSocket(state.wsProtocol + location.host + "/ws")
@@ -41,7 +42,20 @@ export default new Vuex.Store({
       state.ui.showStreets = !state.ui.showStreets
     },
 
-    updateFeatures(state, { msg, type }) {
+    toggleDatePicker(state) {
+      if (state.ui.showDatePicker === false) {
+        state.ui.showDatePicker = true
+        state.ui.pickerText = 'Hide Date Picker'
+      } else {
+        state.ui.showDatePicker = false
+        state.ui.pickerText = 'Show Date Picker'
+      }
+    },
+
+    updateFeatures(state, {
+      msg,
+      type
+    }) {
       var fire = []
       for (let i = 0; i < msg.fireCallsLength(); i++) {
         fire.push({
@@ -61,7 +75,7 @@ export default new Vuex.Store({
         police.push({
           "type": "Feature",
           "properties": {
-              "description": "<strong>" + msg.policeCalls(i).initialTypeDescription().toUpperCase() + "</strong><p>At Scene Time: " + msg.policeCalls(i).atSceneTime().split("T")[1].split(".")[0] + "</p><p>Date: " + msg.policeCalls(i).atSceneTime().split("T")[0] + "</p><p>Location: " + msg.policeCalls(i).hundredBlockLocation() + "</p><p>Event #: " + msg.policeCalls(i).cadEventNumber() + "</p>"
+            "description": "<strong>" + msg.policeCalls(i).initialTypeDescription().toUpperCase() + "</strong><p>At Scene Time: " + msg.policeCalls(i).atSceneTime().split("T")[1].split(".")[0] + "</p><p>Date: " + msg.policeCalls(i).atSceneTime().split("T")[0] + "</p><p>Location: " + msg.policeCalls(i).hundredBlockLocation() + "</p><p>Event #: " + msg.policeCalls(i).cadEventNumber() + "</p>"
           },
           "geometry": {
             "type": "Point",
