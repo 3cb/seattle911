@@ -43,7 +43,7 @@ func setQueryRange(t string, dur string) (string, string, error) {
 func updateFire(t1 string, t2 string) ([]FireCall, error) {
 	f := []FireCall{}
 
-	api := "https://data.seattle.gov/resource/grwu-wqtk.json?$where="
+	api := "https://data.seattle.gov/resource/grwu-wqtk.json?$limit=1000000&$where="
 	queryString := url.QueryEscape("datetime between '" + t1 + "' and '" + t2 + "'")
 	resp, err := http.Get(api + queryString)
 	if err != nil {
@@ -64,7 +64,7 @@ func updateFire(t1 string, t2 string) ([]FireCall, error) {
 func updatePolice(t1 string, t2 string) ([]PoliceCall, error) {
 	p := []PoliceCall{}
 
-	api := "https://data.seattle.gov/resource/pu5n-trf4.json?$where="
+	api := "https://data.seattle.gov/resource/pu5n-trf4.json?$limit=1000000&$where="
 	queryString := url.QueryEscape("at_scene_time between '" + t1 + "' and '" + t2 + "'")
 	resp, err := http.Get(api + queryString)
 	if err != nil {
