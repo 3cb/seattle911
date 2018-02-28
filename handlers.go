@@ -60,8 +60,8 @@ func SingleDate(db *bolt.DB) http.Handler {
 	})
 }
 
-// Month queries Socrata API for call data for requested date
-func Month(db *bolt.DB) http.Handler {
+// Month queries Socrata API for call data for requested dates
+func Month() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		date := vars["month"]
