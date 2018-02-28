@@ -173,10 +173,44 @@ export default {
     },
     submitMonth() {
       axios({
-        url: "/api/day/" + this.month.toISOString().split("T")[0]
+        url: "/api/month/" + this.month.toISOString().split("T")[0],
+        method: "get",
+        responseType: "arraybuffer"
       })
+        .then(response => {
+          let bytes = new Uint8Array(response.data);
+          let buf = new flatbuffers.ByteBuffer(bytes);
+          let message = seattle.Message.getRootAsMessage(buf);
+          this.$store.commit("updateFeatures", {
+            msg: message,
+            type: "history"
+          });
+          this.$store.commit("showHistory");
+        })
+        .catch(err => {
+          console.error("error getting historical 911 call data", err);
+        });
     },
-    submitYear() {}
+    submitYear() {
+      axios({
+        url: "/api/year/" + this.year.toISOString().split("T")[0],
+        method: "get",
+        responseType: "arraybuffer"
+      })
+        .then(response => {
+          let bytes = new Uint8Array(response.data);
+          let buf = new flatbuffers.ByteBuffer(bytes);
+          let message = seattle.Message.getRootAsMessage(buf);
+          this.$store.commit("updateFeatures", {
+            msg: message,
+            type: "history"
+          });
+          this.$store.commit("showHistory");
+        })
+        .catch(err => {
+          console.error("error getting historical 911 call data", err);
+        });
+    }
   },
   components: {}
 };
