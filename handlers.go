@@ -24,11 +24,34 @@ func WS(db *bolt.DB, pool *ssc.Pool, upgrader *websocket.Upgrader) http.Handler 
 }
 
 // SingleDate queries database for 911 calls on date in request
+// Date should be in format of "YYYY-MM-DD"
 func SingleDate(db *bolt.DB) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		date := vars["date"]
 		buf := queryDB(db, date)
+		if len(buf) == 0 {
+			t1, t2, err := setQueryRange(date, "day")
+			if err != nil {
+				w.WriteHeader(400)
+				w.Write([]byte("invalid date string"))
+			}
+			f, err := updateFire(t1, t2)
+			if err != nil {
+				w.WriteHeader(400)
+				w.Write([]byte("unable to get data"))
+			}
+			p, err := updatePolice(t1, t2)
+			if err != nil {
+				w.WriteHeader(400)
+				w.Write([]byte("unable to get data"))
+			}
+			buf = serialize(f, p, date)
+			err = updateDB(db, date, buf)
+			if err != nil {
+				log.Printf("Unable to save to database: %v\n", err)
+			}
+		}
 		w.Write(buf)
 	})
 }
