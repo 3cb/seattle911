@@ -13,13 +13,18 @@
                     </li>
                     <li v-show="radio == 1">
                         <el-date-picker
-                            v-model="today"
+                            v-model="day"
                             type="date"
                             placeholder="Pick a Day"
                             :picker-options="pickerOptionsDay"
                         >
                         </el-date-picker>
-                        <el-button type="primary" plain>Submit</el-button>
+                        <el-button
+                          type="primary"
+                          @click="submitDay"
+                          plain>
+                            Submit
+                        </el-button>
                     </li>
                     <li v-show="radio == 2">
                         <el-date-picker
@@ -29,7 +34,12 @@
                             :picker-options="pickerOptionsMonth"
                         >
                         </el-date-picker>
-                        <el-button type="primary" plain>Submit</el-button>
+                        <el-button
+                          type="primary"
+                          @click="submitMonth"
+                          plain>
+                            Submit
+                        </el-button>
                     </li>
                     <li v-show="radio == 3">
                         <el-date-picker
@@ -39,10 +49,15 @@
                             :picker-options="pickerOptionsYear"
                         >
                         </el-date-picker>
-                        <el-button type="primary" plain>Submit</el-button>
+                        <el-button
+                          type="primary"
+                          @click="submitYear"
+                          plain>
+                            Submit
+                        </el-button>
                     </li>
                     <li><span>**Seattle is in PST</span></li>
-                    {{ today }}
+                    <li>{{ showToday }}</li>
                 </ul>
             </div>
             <div class="column is-10">
@@ -54,11 +69,17 @@
 
 <script>
 import { DateTime } from "luxon";
+var flatbuffers = require("../../node_modules/flatbuffers").flatbuffers;
+var seattle = require("../seattle/schema_generated.js").seattle;
+import axios from 'axios'
 
 export default {
   data() {
     return {
       radio: 1,
+      day: null,
+      month: null,
+      year: null,
       pickerOptionsDay: {
         disabledDate(time) {
           let date = DateTime.fromISO(
@@ -118,31 +139,40 @@ export default {
             return true;
           }
         }
-      },
-      local: {
-        dow: 0, // Sunday is the first day of the week
-        hourTip: "Select Hour", // tip of select hour
-        minuteTip: "Select Minute", // tip of select minute
-        secondTip: "Select Second", // tip of select second
-        yearSuffix: "", // suffix of head year
-        monthsHead: "January_February_March_April_May_June_July_August_September_October_November_December".split(
-          "_"
-        ), // months of head
-        months: "Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec".split("_"), // months of panel
-        weeks: "Su_Mo_Tu_We_Th_Fr_Sa".split("_"), // weeks,
-        cancelTip: "cancel",
-        submitTip: "confirm"
-      },
-      //   today: DateTime.local().setZone("America/Los_Angeles"),
-      //   day: DateTime.local()
-      //     .setZone("America/Los_Angeles")
-      //     .toISO(),
-      today: null,
-      month: null,
-      year: null
+      }
     };
   },
-  methods: {},
+  computed: {
+    showToday() {
+      return this.$store.state.ui.showToday
+    }
+  },
+  methods: {
+    // takes ISODate string parameter (YYYY-MM-DD)
+    submitDay() {
+      console.log(this.day.toISOString().split("T")[0])
+      axios({
+        url: "/api/day/" + this.day.toISOString().split("T")[0],
+        method: "get",
+        responseType: "arraybuffer"
+      })
+        .then(response => {
+          let bytes = new Uint8Array(response.data);
+          let buf = new flatbuffers.ByteBuffer(bytes);
+          let message = seattle.Message.getRootAsMessage(buf);
+          this.$store.commit("updateFeatures", {
+            msg: message,
+            type: "history"
+          });
+          this.$store.commit("showHistory");
+        })
+        .catch(err => {
+          console.error("error getting historical 911 call data", err);
+        });
+    },
+    submitMonth() {},
+    submitYear() {}
+  },
   components: {}
 };
 </script>

@@ -52,6 +52,13 @@ export default new Vuex.Store({
       }
     },
 
+    showToday(state) {
+      state.ui.showToday = true
+    },
+    showHistory(state) {
+      state.ui.showToday = false
+    },
+
     updateFeatures(state, {
       msg,
       type
