@@ -57,7 +57,7 @@
                         </el-button>
                     </li>
                     <li><span>**Seattle is in PST</span></li>
-                    <li>{{ showToday }}</li>
+                    <li>{{ month }}</li>
                 </ul>
             </div>
             <div class="column is-10">
@@ -71,7 +71,7 @@
 import { DateTime } from "luxon";
 var flatbuffers = require("../../node_modules/flatbuffers").flatbuffers;
 var seattle = require("../seattle/schema_generated.js").seattle;
-import axios from 'axios'
+import axios from "axios";
 
 export default {
   data() {
@@ -144,13 +144,12 @@ export default {
   },
   computed: {
     showToday() {
-      return this.$store.state.ui.showToday
+      return this.$store.state.ui.showToday;
     }
   },
   methods: {
     // takes ISODate string parameter (YYYY-MM-DD)
     submitDay() {
-      console.log(this.day.toISOString().split("T")[0])
       axios({
         url: "/api/day/" + this.day.toISOString().split("T")[0],
         method: "get",
