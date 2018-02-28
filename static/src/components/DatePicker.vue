@@ -22,7 +22,8 @@
                         <el-button
                           type="primary"
                           @click="submitDay"
-                          plain>
+                          plain
+                          :disabled="!day">
                             Submit
                         </el-button>
                     </li>
@@ -37,7 +38,8 @@
                         <el-button
                           type="primary"
                           @click="submitMonth"
-                          plain>
+                          plain
+                          :disabled="!month">
                             Submit
                         </el-button>
                     </li>
@@ -52,7 +54,8 @@
                         <el-button
                           type="primary"
                           @click="submitYear"
-                          plain>
+                          plain
+                          :disabled="!year">
                             Submit
                         </el-button>
                     </li>
@@ -148,7 +151,6 @@ export default {
     }
   },
   methods: {
-    // takes ISODate string parameter (YYYY-MM-DD)
     submitDay() {
       axios({
         url: "/api/day/" + this.day.toISOString().split("T")[0],
@@ -169,7 +171,11 @@ export default {
           console.error("error getting historical 911 call data", err);
         });
     },
-    submitMonth() {},
+    submitMonth() {
+      axios({
+        url: "/api/day/" + this.month.toISOString().split("T")[0]
+      })
+    },
     submitYear() {}
   },
   components: {}
