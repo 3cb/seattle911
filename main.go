@@ -43,7 +43,10 @@ func main() {
 	upgrader := &websocket.Upgrader{}
 	r.Handle("/ws", WS(db, pool, upgrader))
 	r.Handle("/api/day/{date}", SingleDate(db))
-	r.Handle("/api/month/{month}", Month())
+	// {date} variable is first day of month
+	r.Handle("/api/month/{date}", Month())
+	// {date} variable is first day of year
+	r.Handle("/api/year/{date}", Year())
 
 	// start server
 	log.Fatal(http.ListenAndServe(":3030", r))
