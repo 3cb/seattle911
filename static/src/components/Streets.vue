@@ -1,36 +1,12 @@
 <template>
     <div>
-      <div class="columns is-multiline is-gapless sb">
-        <div class="column is-4">
-          <a class="button is-rounded sb-style" @click="toggleStyle">Toggle Style</a>
-        </div>
-        <div class="column is-4">
-          <a class="button is-rounded sb-fire" @click="toggleFire">Toggle Fire</a>
-        </div>
-        <div class="column is-4">
-          <a class="button is-rounded sb-police" @click="togglePolice">Toggle Police</a>
-        </div>
-        <div class="column is-12">
-           <a class="button is-rounded sb-date" @click="toggleDatePicker">
-             <span v-show="!showDatePicker" class="icon is-small">
-               <i class="fas fa-angle-double-right"></i>
-             </span>
-             <span v-show="showDatePicker" class="icon is-small">
-               <i class="fas fa-angle-double-down"></i>
-             </span>
-             <span>{{ displayDates }}</span>
-           </a>
-        </div>
-        <div class="column is-12">
-          <date-picker v-show="showDatePicker"></date-picker>
-        </div>
-      </div>
+      <toolbar></toolbar>
       <div id='map'></div>
     </div>
 </template>
 
 <script>
-import DatePicker from "./DatePicker.vue";
+import Toolbar from "./Toolbar.vue";
 var flatbuffers = require("../../node_modules/flatbuffers").flatbuffers;
 var seattle = require("../seattle/schema_generated.js").seattle;
 import axios from "axios";
@@ -64,16 +40,6 @@ export default {
     };
   },
   computed: {
-    showDatePicker() {
-      return this.$store.state.ui.showDatePicker;
-    },
-    displayDates() {
-      return this.$store.state.ui.showToday
-        ? DateTime.local()
-            .setZone("America/Los_Angeles")
-            .toISODate()
-        : this.$store.state.features.history.date.split("~").join(" to ");
-    },
     ffeatures() {
       if (this.$store.state.ui.showToday === true) {
         return this.$store.state.features.today.fire;
@@ -193,9 +159,6 @@ export default {
     });
   },
   methods: {
-    toggleStyle() {
-      this.$store.commit("toggleStyle");
-    },
     // takes ISODate string parameter (YYYY-MM-DD)
     createDayRequest(date) {
       return {
@@ -203,29 +166,10 @@ export default {
         method: "get",
         responseType: "arraybuffer"
       };
-    },
-    toggleFire() {
-      if (this.showFire === true) {
-        this.map.removeLayer("fire");
-      } else {
-        this.map.addLayer(this.fireLayer);
-      }
-      this.showFire = !this.showFire;
-    },
-    togglePolice() {
-      if (this.showPolice === true) {
-        this.map.removeLayer("police");
-      } else {
-        this.map.addLayer(this.policeLayer);
-      }
-      this.showPolice = !this.showPolice;
-    },
-    toggleDatePicker() {
-      this.$store.commit("toggleDatePicker");
     }
   },
   components: {
-    DatePicker
+    Toolbar
   }
 };
 </script>
@@ -247,54 +191,5 @@ body {
 .mapboxgl-popup {
   max-width: 400px;
   font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
-}
-
-.sb {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  height: 50px;
-  width: 360px;
-  z-index: 10;
-}
-
-.sb-style {
-  width: 100%;
-  color: white;
-  background-color: #3273dc;
-}
-.sb-style:hover {
-  color: white;
-  background-color: #5188e1;
-}
-
-.sb-fire {
-  width: 100%;
-  color: white;
-  background-color: #b42222;
-}
-.sb-fire:hover {
-  color: white;
-  background-color: #de5454;
-}
-
-.sb-police {
-  width: 100%;
-  color: white;
-  background-color: #034cc1;
-}
-.sb-police:hover {
-  color: white;
-  background-color: #3682fc;
-}
-
-.sb-date {
-  width: 100%;
-  color: hsl(0, 0%, 96%);
-  background-color: hsl(0, 0%, 29%);
-}
-.sb-date:hover {
-  color: hsl(0, 0%, 96%);
-  background-color: hsl(0, 0%, 42%);
 }
 </style>
