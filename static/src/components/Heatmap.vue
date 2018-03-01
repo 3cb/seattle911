@@ -1,30 +1,24 @@
 <template>
     <div>
-        <div class="sb">
-            <a class="button is-rounded sb-style" @click="toggleStyle">Toggle Style</a>
-            <a class="button is-rounded sb-fire" @click="toggleFire">Toggle Fire</a>
-            <a class="button is-rounded sb-police" @click="togglePolice">Toggle Police</a>
-        </div>
+        <toolbar :map="map" :fireLayer="fireLayer" :policeLayer="policeLayer"></toolbar>
         <div id='heatmap'></div>
     </div>
 </template>
 
 <script>
+import Toolbar from "./Toolbar.vue";
 var flatbuffers = require("../../node_modules/flatbuffers").flatbuffers;
 var seattle = require("../seattle/schema_generated.js").seattle;
 import axios from "axios";
-import moment from "moment";
+import { DateTime } from "luxon";
 
 export default {
   data() {
     return {
       map: null,
 
-      showFire: true,
-      showPolice: true,
-
       fireLayer: {
-        id: "fire-heat",
+        id: "fire",
         type: "heatmap",
         source: "fcalls",
         paint: {
@@ -58,7 +52,7 @@ export default {
         }
       },
       policeLayer: {
-        id: "police-heat",
+        id: "police",
         type: "heatmap",
         source: "pcalls",
         paint: {
@@ -95,10 +89,18 @@ export default {
   },
   computed: {
     ffeatures() {
-      return this.$store.state.features.fire;
+      if (this.$store.state.ui.showToday === true) {
+        return this.$store.state.features.today.fire;
+      } else {
+        return this.$store.state.features.history.fire;
+      }
     },
     pfeatures() {
-      return this.$store.state.features.police;
+      if (this.$store.state.ui.showToday === true) {
+        return this.$store.state.features.today.police;
+      } else {
+        return this.$store.state.features.history.police;
+      }
     }
   },
   watch: {
@@ -116,6 +118,8 @@ export default {
     }
   },
   mounted() {
+    this.$store.commit("resetFirePolice")
+
     mapboxgl.accessToken =
       "pk.eyJ1IjoibWFyY2NiIiwiYSI6ImNqYTR1enN2dGE0bWEyd3BhcTd6cnBzc3MifQ.Z4zYRzVCXv5zCqqdpgKZ-w";
     this.map = new mapboxgl.Map({
@@ -128,21 +132,22 @@ export default {
     this.map.addControl(new mapboxgl.NavigationControl());
 
     this.map.on("load", () => {
-      axios({
-        url:
-          "/api/day/" +
-          moment()
-            .format()
-            .split("T")[0],
-        method: "get",
-        responseType: "arraybuffer"
-      })
+      axios(
+        this.createDayRequest(
+          DateTime.local()
+            .setZone("America/Los_Angeles")
+            .toISODate()
+        )
+      )
         .then(response => {
           let bytes = new Uint8Array(response.data);
           let buf = new flatbuffers.ByteBuffer(bytes);
           let message = seattle.Message.getRootAsMessage(buf);
-          this.$store.commit("updateCalls", message);
-          this.$store.commit("updateFeatures");
+          this.$store.commit("updateFeatures", {
+            msg: message,
+            type: "today"
+          });
+
           this.map.addSource("fcalls", {
             type: "geojson",
             data: {
@@ -166,25 +171,17 @@ export default {
     });
   },
   methods: {
-    toggleStyle() {
-      this.$store.commit("toggleStyle");
-    },
-    toggleFire() {
-      if (this.showFire === true) {
-        this.map.removeLayer("fire-heat");
-      } else {
-        this.map.addLayer(this.fireLayer);
-      }
-      this.showFire = !this.showFire;
-    },
-    togglePolice() {
-      if (this.showPolice === true) {
-        this.map.removeLayer("police-heat");
-      } else {
-        this.map.addLayer(this.policeLayer);
-      }
-      this.showPolice = !this.showPolice;
+    // takes ISODate string parameter (YYYY-MM-DD)
+    createDayRequest(date) {
+      return {
+        url: "/api/day/" + date,
+        method: "get",
+        responseType: "arraybuffer"
+      };
     }
+  },
+  components: {
+    Toolbar
   }
 };
 </script>

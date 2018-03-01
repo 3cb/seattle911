@@ -5,12 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gorilla/websocket"
-
 	"github.com/3cb/ssc"
-
 	"github.com/boltdb/bolt"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 )
 
 func main() {
@@ -25,14 +23,14 @@ func main() {
 	}
 	defer db.Close()
 
-	wsp := ssc.NewPool([]string{}, time.Second*0)
-	err = wsp.Start()
+	pool := ssc.NewPool([]string{}, time.Second*0)
+	err = pool.Start()
 	if err != nil {
 		log.Fatal("Unable to start pool to serve websocket connections.")
 	}
 
 	// start 5 minute polling goroutine
-	go poll(db, wsp)
+	go poll(db, pool)
 
 	// create new router instance
 	r := mux.NewRouter()
@@ -43,30 +41,13 @@ func main() {
 
 	// handle websocket requests
 	upgrader := &websocket.Upgrader{}
-	r.Handle("/ws", wsHandler(db, wsp, upgrader))
-
-	r.Handle("/api/day/{date}", queryHandler(db))
+	r.Handle("/ws", WS(db, pool, upgrader))
+	r.Handle("/api/day/{date}", SingleDate(db))
+	// {date} variable is first day of month
+	r.Handle("/api/month/{date}", Month())
+	// {date} variable is first day of year
+	r.Handle("/api/year/{date}", Year())
 
 	// start server
 	log.Fatal(http.ListenAndServe(":3030", r))
-}
-
-func wsHandler(db *bolt.DB, pool *ssc.Pool, upgrader *websocket.Upgrader) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		err := pool.AddClientSocket("", upgrader, w, r)
-		if err != nil {
-			log.Printf("Unable to create client websocket connection: %v\n", err)
-		} else {
-			log.Printf("New websocket client connected.")
-		}
-	})
-}
-
-func queryHandler(db *bolt.DB) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		date := vars["date"]
-		buf := queryDB(db, date)
-		w.Write(buf)
-	})
 }
