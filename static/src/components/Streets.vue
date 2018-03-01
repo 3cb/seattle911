@@ -1,6 +1,6 @@
 <template>
     <div>
-      <toolbar></toolbar>
+      <toolbar :map="map" :fireLayer="fireLayer" :policeLayer="policeLayer"></toolbar>
       <div id='map'></div>
     </div>
 </template>
@@ -16,9 +16,6 @@ export default {
   data() {
     return {
       map: null,
-      showPolice: true,
-      showFire: true,
-
       fireLayer: {
         id: "fire",
         type: "circle",
@@ -70,6 +67,8 @@ export default {
     }
   },
   mounted() {
+    this.$store.commit("resetFirePolice")
+
     mapboxgl.accessToken =
       "pk.eyJ1IjoibWFyY2NiIiwiYSI6ImNqYTR1enN2dGE0bWEyd3BhcTd6cnBzc3MifQ.Z4zYRzVCXv5zCqqdpgKZ-w";
     this.map = new mapboxgl.Map({

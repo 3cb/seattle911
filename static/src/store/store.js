@@ -12,6 +12,8 @@ export default new Vuex.Store({
     ui: {
       showToday: true,
       showStreets: true,
+      showFire: true,
+      showPolice: true,
       showDatePicker: false,
       pickerText: 'Show Date Picker'
     },
@@ -29,7 +31,7 @@ export default new Vuex.Store({
       }
     }
   },
-  
+
   mutations: {
     startWS(state) {
       state.ws = new WebSocket(state.wsProtocol + location.host + "/ws")
@@ -41,6 +43,17 @@ export default new Vuex.Store({
 
     toggleStyle(state) {
       state.ui.showStreets = !state.ui.showStreets
+    },
+
+    resetFirePolice(state) {
+      state.ui.showFire = true
+      state.ui.showPolice = true
+    },
+    toggleFire(state) {
+      state.ui.showFire = !state.ui.showFire;
+    },
+    togglePolice(state) {
+      state.ui.showPolice = !state.ui.showPolice;
     },
 
     toggleDatePicker(state) {

@@ -31,6 +31,7 @@ import DatePicker from "./DatePicker.vue";
 import { DateTime } from "luxon";
 
 export default {
+  props: ["map", "fireLayer", "policeLayer"],
   computed: {
     showDatePicker() {
       return this.$store.state.ui.showDatePicker;
@@ -48,20 +49,20 @@ export default {
       this.$store.commit("toggleStyle");
     },
     toggleFire() {
-      if (this.showFire === true) {
+      if (this.$store.state.ui.showFire === true) {
         this.map.removeLayer("fire");
       } else {
         this.map.addLayer(this.fireLayer);
       }
-      this.showFire = !this.showFire;
+      this.$store.commit("toggleFire")
     },
     togglePolice() {
-      if (this.showPolice === true) {
+      if (this.$store.state.ui.showPolice === true) {
         this.map.removeLayer("police");
       } else {
         this.map.addLayer(this.policeLayer);
       }
-      this.showPolice = !this.showPolice;
+      this.$store.commit("togglePolice")
     },
     toggleDatePicker() {
       this.$store.commit("toggleDatePicker");
