@@ -18,6 +18,12 @@
                <i class="fas fa-angle-double-down"></i>
              </span>
              <span>{{ displayDates }}</span>
+             <span v-show="!showDatePicker" class="icon is-small">
+               <i class="fas fa-angle-double-left"></i>
+             </span>
+             <span v-show="showDatePicker" class="icon is-small">
+               <i class="fas fa-angle-double-down"></i>
+             </span>
            </a>
         </div>
         <div class="column is-12">
