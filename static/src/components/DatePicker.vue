@@ -1,73 +1,90 @@
 <template>
-    <div class="sb-picker">
-        <div class="columns is-multiline is-centered">
-            <div class="column is-10"></div>
-            <div class="column is-10">
-                <ul class="sb-date-input">
-                    <li>
-                        <el-radio-group v-model="radio">
-                            <el-radio :label="1">Day</el-radio>
-                            <el-radio :label="2">Month</el-radio>
-                            <el-radio :label="3">Year</el-radio>
-                        </el-radio-group>
-                    </li>
-                    <li v-show="radio == 1">
-                        <el-date-picker
-                            v-model="day"
-                            type="date"
-                            placeholder="Pick a Day"
-                            :picker-options="pickerOptionsDay"
-                        >
-                        </el-date-picker>
-                        <button
-                          class="button is-outlined is-info"
-                          @click="submitDay"
-                          :disabled="!day">
-                            Submit
-                        </button>
-                    </li>
-                    <li v-show="radio == 2">
-                        <el-date-picker
-                            v-model="month"
-                            type="month"
-                            placeholder="Pick a Month"
-                            :picker-options="pickerOptionsMonth"
-                        >
-                        </el-date-picker>
-                        <button
-                          class="button is-outlined is-info"
-                          @click="submitMonth"
-                          :disabled="!month">
-                            Submit
-                        </button>
-                    </li>
-                    <li v-show="radio == 3">
-                        <el-date-picker
-                            v-model="year"
-                            type="year"
-                            placeholder="Pick a Year"
-                            :picker-options="pickerOptionsYear"
-                        >
-                        </el-date-picker>
-                        <button
-                          class="button is-outlined is-info"
-                          @click="submitYear"
-                          :disabled="!year">
-                            Submit
-                        </button>
-                    </li>
-                </ul>
-            </div>
-            <div class="column is-10">
-                <button
-                  @click="toggleDisplay"
-                  class="button is-info is-outlined sb-today-btn"
-                  :disabled="!historyDate">
-                   {{ displayButtonLabel }}
-                </button>
-            </div>
+<div class="sb-picker">
+    <div class="columns is-multiline is-centered">
+      <div class ="column is-10"></div>      
+      <div class ="column is-8">
+        <div class="tabs is-centered">
+          <ul>
+            <li :class="tabs.day"><a @click="setTab(1)">Day</a></li>
+            <li :class="tabs.month"><a @click="setTab(2)">Month</a></li>
+            <li :class="tabs.year"><a @click="setTab(3)">Year</a></li>
+          </ul>
         </div>
+
+        <div v-show="tabs.is == 1" class="field">
+          <div class="control has-text-centered">
+            <el-date-picker
+                v-model="day"
+                type="date"
+                placeholder="Pick a Day"
+                :picker-options="pickerOptionsDay"
+            >
+            </el-date-picker>
+          </div>
+        </div>
+        <div v-show="tabs.is == 1" class="field">
+          <div class="control has-text-centered">
+            <button
+              class="button is-outlined is-info"
+              @click="submitDay"
+              :disabled="!day">
+                Submit
+            </button>
+          </div>
+        </div>
+        <div v-show="tabs.is == 2" class="field">
+          <div class="control has-text-centered">
+            <el-date-picker
+                v-model="month"
+                type="month"
+                placeholder="Pick a Month"
+                :picker-options="pickerOptionsMonth"
+            >
+            </el-date-picker>
+          </div>
+        </div>
+        <div v-show="tabs.is == 2" class="field">
+          <div class="control has-text-centered">
+            <button
+              class="button is-outlined is-info"
+              @click="submitMonth"
+              :disabled="!month">
+                Submit
+            </button>
+          </div>
+        </div>
+        <div v-show="tabs.is == 3" class="field">
+          <div class="control has-text-centered">
+            <el-date-picker
+                v-model="year"
+                type="year"
+                placeholder="Pick a Year"
+                :picker-options="pickerOptionsYear"
+            >
+            </el-date-picker>
+          </div>
+        </div>
+        <div v-show="tabs.is == 3" class="field">
+          <div class="control has-text-centered">
+            <button
+              class="button is-outlined is-info"
+              @click="submitYear"
+              :disabled="!year">
+                Submit
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class ="column is-10">
+        <button
+          @click="toggleDisplay"
+          class="button is-outlined sb-today-btn"
+          :disabled="!historyDate">
+            {{ displayButtonLabel }}
+        </button>
+      </div>
     </div>
+</div>
 </template>
 
 <script>
@@ -79,7 +96,12 @@ import axios from "axios";
 export default {
   data() {
     return {
-      radio: 1,
+      tabs: {
+        is: 1,
+        day: "is-active",
+        month: "",
+        year: ""
+      },
       day: null,
       // first day of selected month: "YYYY-MM-DD"
       month: null,
@@ -152,13 +174,35 @@ export default {
       return this.$store.state.ui.showToday;
     },
     displayButtonLabel() {
-      return this.showToday ? "Show Historical Calls" : "Show Today's Calls"
+      return this.showToday ? "Show Historical Calls" : "Show Today's Calls";
     },
     historyDate() {
-      return this.$store.state.features.history.date
+      return this.$store.state.features.history.date;
     }
   },
   methods: {
+    setTab(number) {
+      switch (number) {
+        case 1:
+          this.tabs.is = 1;
+          this.tabs.day = "is-active";
+          this.tabs.month = "";
+          this.tabs.year = "";
+          break;
+        case 2:
+          this.tabs.is = 2;
+          this.tabs.day = "";
+          this.tabs.month = "is-active";
+          this.tabs.year = "";
+          break;
+        case 3:
+          this.tabs.is = 3;
+          this.tabs.day = "";
+          this.tabs.month = "";
+          this.tabs.year = "is-active";
+          break;
+      }
+    },
     submitDay() {
       axios({
         url: "/api/day/" + this.day.toISOString().split("T")[0],
@@ -220,7 +264,9 @@ export default {
         });
     },
     toggleDisplay() {
-      this.$store.state.ui.showToday ? this.$store.commit('showHistory') : this.$store.commit("showToday")
+      this.$store.state.ui.showToday
+        ? this.$store.commit("showHistory")
+        : this.$store.commit("showToday");
     }
   }
 };
@@ -231,14 +277,6 @@ export default {
   width: 100%;
   color: hsl(0, 0%, 21%);
   background-color: hsl(0, 0%, 96%);
-}
-
-.sb-date-input {
-  width: 100%;
-}
-
-.date-submit {
-  width: 50%;
 }
 
 .sb-today-btn {
