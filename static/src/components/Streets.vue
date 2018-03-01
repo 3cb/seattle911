@@ -11,7 +11,15 @@
           <a class="button is-rounded sb-police" @click="togglePolice">Toggle Police</a>
         </div>
         <div class="column is-12">
-          <a class="button is-rounded sb-date" @click="toggleDatePicker">{{ pickerText }}</a>
+           <a class="button is-rounded sb-date" @click="toggleDatePicker">
+             <span v-show="!showDatePicker" class="icon is-small">
+               <i class="fas fa-angle-double-right"></i>
+             </span>
+             <span v-show="showDatePicker" class="icon is-small">
+               <i class="fas fa-angle-double-down"></i>
+             </span>
+             <span>{{ displayDates }}</span>
+           </a>
         </div>
         <div class="column is-12">
           <date-picker v-show="showDatePicker"></date-picker>
@@ -26,7 +34,7 @@ import DatePicker from "./DatePicker.vue";
 var flatbuffers = require("../../node_modules/flatbuffers").flatbuffers;
 var seattle = require("../seattle/schema_generated.js").seattle;
 import axios from "axios";
-import { DateTime } from 'luxon'
+import { DateTime } from "luxon";
 
 export default {
   data() {
@@ -59,14 +67,18 @@ export default {
     showDatePicker() {
       return this.$store.state.ui.showDatePicker;
     },
-    pickerText() {
-      return this.$store.state.ui.pickerText;
+    displayDates() {
+      return this.$store.state.ui.showToday
+        ? DateTime.local()
+            .setZone("America/Los_Angeles")
+            .toISODate()
+        : this.$store.state.features.history.date.split("~").join(" to ");
     },
     ffeatures() {
       if (this.$store.state.ui.showToday === true) {
         return this.$store.state.features.today.fire;
       } else {
-        return this.$store.state.features.history.fire
+        return this.$store.state.features.history.fire;
       }
     },
     pfeatures() {
@@ -104,15 +116,21 @@ export default {
     this.map.addControl(new mapboxgl.NavigationControl());
 
     this.map.on("load", () => {
-      axios(this.createDayRequest(DateTime.local().setZone("America/Los_Angeles").toISODate()))
+      axios(
+        this.createDayRequest(
+          DateTime.local()
+            .setZone("America/Los_Angeles")
+            .toISODate()
+        )
+      )
         .then(response => {
           let bytes = new Uint8Array(response.data);
           let buf = new flatbuffers.ByteBuffer(bytes);
           let message = seattle.Message.getRootAsMessage(buf);
           this.$store.commit("updateFeatures", {
-              msg: message,
-              type: 'today'
-            });
+            msg: message,
+            type: "today"
+          });
 
           this.map.addSource("fcalls", {
             type: "geojson",
@@ -184,7 +202,7 @@ export default {
         url: "/api/day/" + date,
         method: "get",
         responseType: "arraybuffer"
-      }
+      };
     },
     toggleFire() {
       if (this.showFire === true) {
