@@ -19,13 +19,12 @@
                             :picker-options="pickerOptionsDay"
                         >
                         </el-date-picker>
-                        <el-button
-                          type="primary"
+                        <button
+                          class="button is-outlined is-info"
                           @click="submitDay"
-                          plain
                           :disabled="!day">
                             Submit
-                        </el-button>
+                        </button>
                     </li>
                     <li v-show="radio == 2">
                         <el-date-picker
@@ -35,13 +34,12 @@
                             :picker-options="pickerOptionsMonth"
                         >
                         </el-date-picker>
-                        <el-button
-                          type="primary"
+                        <button
+                          class="button is-outlined is-info"
                           @click="submitMonth"
-                          plain
                           :disabled="!month">
                             Submit
-                        </el-button>
+                        </button>
                     </li>
                     <li v-show="radio == 3">
                         <el-date-picker
@@ -51,20 +49,22 @@
                             :picker-options="pickerOptionsYear"
                         >
                         </el-date-picker>
-                        <el-button
-                          type="primary"
+                        <button
+                          class="button is-outlined is-info"
                           @click="submitYear"
-                          plain
                           :disabled="!year">
                             Submit
-                        </el-button>
+                        </button>
                     </li>
-                    <li><span>**Seattle is in PST</span></li>
-                    <li>{{ month }}</li>
                 </ul>
             </div>
             <div class="column is-10">
-                <a class="button is-rounded sb-today-btn">Show Today's Calls</a>
+                <button
+                  @click="toggleDisplay"
+                  class="button is-info is-outlined sb-today-btn"
+                  :disabled="!historyDate">
+                   {{ displayButtonLabel }}
+                </button>
             </div>
         </div>
     </div>
@@ -81,7 +81,9 @@ export default {
     return {
       radio: 1,
       day: null,
+      // first day of selected month: "YYYY-MM-DD"
       month: null,
+      // first day of selected year: "YYYY-MM-DD"
       year: null,
       pickerOptionsDay: {
         disabledDate(time) {
@@ -148,6 +150,12 @@ export default {
   computed: {
     showToday() {
       return this.$store.state.ui.showToday;
+    },
+    displayButtonLabel() {
+      return this.showToday ? "Show Historical Calls" : "Show Today's Calls"
+    },
+    historyDate() {
+      return this.$store.state.features.history.date
     }
   },
   methods: {
@@ -210,9 +218,11 @@ export default {
         .catch(err => {
           console.error("error getting historical 911 call data", err);
         });
+    },
+    toggleDisplay() {
+      this.$store.state.ui.showToday ? this.$store.commit('showHistory') : this.$store.commit("showToday")
     }
-  },
-  components: {}
+  }
 };
 </script>
 
