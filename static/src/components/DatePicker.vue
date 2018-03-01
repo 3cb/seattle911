@@ -25,7 +25,7 @@
         <div v-show="tabs.is == 1" class="field">
           <div class="control has-text-centered">
             <button
-              class="button is-outlined is-info"
+              class="button is-outlined is-link"
               @click="submitDay"
               :disabled="!day">
                 Submit
@@ -46,7 +46,7 @@
         <div v-show="tabs.is == 2" class="field">
           <div class="control has-text-centered">
             <button
-              class="button is-outlined is-info"
+              class="button is-outlined is-link"
               @click="submitMonth"
               :disabled="!month">
                 Submit
@@ -67,7 +67,7 @@
         <div v-show="tabs.is == 3" class="field">
           <div class="control has-text-centered">
             <button
-              class="button is-outlined is-info"
+              class="button is-outlined is-link"
               @click="submitYear"
               :disabled="!year">
                 Submit
@@ -78,7 +78,7 @@
       <div class ="column is-10">
         <button
           @click="toggleDisplay"
-          class="button is-outlined sb-today-btn"
+          class="button is-link sb-today-btn"
           :disabled="!historyDate">
             {{ displayButtonLabel }}
         </button>

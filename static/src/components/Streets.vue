@@ -290,11 +290,11 @@ body {
 
 .sb-date {
   width: 100%;
-  color: hsl(0, 0%, 21%);
-  background-color: hsl(0, 0%, 96%);
+  color: hsl(0, 0%, 96%);
+  background-color: hsl(0, 0%, 29%);
 }
 .sb-date:hover {
   color: hsl(0, 0%, 96%);
-  background-color: hsl(0, 0%, 21%);
+  background-color: hsl(0, 0%, 42%);
 }
 </style>
