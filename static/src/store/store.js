@@ -22,7 +22,8 @@ export default new Vuex.Store({
         police: []
       },
       history: {
-        type: '', // 'single' or 'range'
+        // type: '', // 'single' or 'range'
+        date: '', // "YYYY-MM-DD" or "YYYY-MM-DD~YYYY-MM-DD"
         fire: [],
         police: []
       }
@@ -97,6 +98,7 @@ export default new Vuex.Store({
         state.features.today.fire = fire
         state.features.today.police = police
       } else if (type === 'history') {
+        state.features.history.date = msg.date()
         state.features.history.fire = fire
         state.features.history.police = police
       }
