@@ -96,8 +96,6 @@ export default new Vuex.Store({
           }
         })
       }
-      console.log(fire)
-      console.log(police)
 
       if (type === 'today') {
         state.features.today.fire = fire
