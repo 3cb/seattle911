@@ -1,7 +1,10 @@
 <template>
 <div class="sb-picker">
     <div class="columns is-multiline is-centered">
-      <div class ="column is-10"></div>      
+      <div class="column is-12">
+        <p class="date-disp is-size-5 is-uppercase has-text-centered">{{ displayDates }}</p>
+      </div>
+
       <div class ="column is-8">
         <div class="tabs is-centered">
           <ul>
@@ -173,6 +176,13 @@ export default {
     showToday() {
       return this.$store.state.ui.showToday;
     },
+    displayDates() {
+      return this.$store.state.ui.showToday
+        ? DateTime.local()
+            .setZone("America/Los_Angeles")
+            .toISODate()
+        : this.$store.state.features.history.date.split("~").join("  to  ");
+    },
     displayButtonLabel() {
       return this.showToday ? "Show Historical Calls" : "Show Today's Calls";
     },
@@ -273,6 +283,10 @@ export default {
 </script>
 
 <style>
+.date-disp {
+  padding-top: 5px;
+}
+
 .sb-picker {
   width: 100%;
   color: hsl(0, 0%, 21%);

@@ -14,8 +14,6 @@ export default new Vuex.Store({
       showStreets: true,
       showFire: true,
       showPolice: true,
-      showDatePicker: false,
-      pickerText: 'Show Date Picker'
     },
 
     features: {
@@ -54,16 +52,6 @@ export default new Vuex.Store({
     },
     togglePolice(state) {
       state.ui.showPolice = !state.ui.showPolice;
-    },
-
-    toggleDatePicker(state) {
-      if (state.ui.showDatePicker === false) {
-        state.ui.showDatePicker = true
-        state.ui.pickerText = 'Hide Date Picker'
-      } else {
-        state.ui.showDatePicker = false
-        state.ui.pickerText = 'Show Date Picker'
-      }
     },
 
     showToday(state) {
