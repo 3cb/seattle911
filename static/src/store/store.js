@@ -14,8 +14,7 @@ export default new Vuex.Store({
       showStreets: true,
       showFire: true,
       showPolice: true,
-      showDatePicker: false,
-      pickerText: 'Show Date Picker'
+      submitIsLoading: false,
     },
 
     features: {
@@ -24,7 +23,6 @@ export default new Vuex.Store({
         police: []
       },
       history: {
-        // type: '', // 'single' or 'range'
         date: '', // "YYYY-MM-DD" or "YYYY-MM-DD~YYYY-MM-DD"
         fire: [],
         police: []
@@ -56,16 +54,9 @@ export default new Vuex.Store({
       state.ui.showPolice = !state.ui.showPolice;
     },
 
-    toggleDatePicker(state) {
-      if (state.ui.showDatePicker === false) {
-        state.ui.showDatePicker = true
-        state.ui.pickerText = 'Hide Date Picker'
-      } else {
-        state.ui.showDatePicker = false
-        state.ui.pickerText = 'Show Date Picker'
-      }
+    toggleIsLoading(state) {
+      state.ui.submitIsLoading = !state.ui.submitIsLoading
     },
-
     showToday(state) {
       state.ui.showToday = true
     },
@@ -104,8 +95,6 @@ export default new Vuex.Store({
           }
         })
       }
-      console.log(fire)
-      console.log(police)
 
       if (type === 'today') {
         state.features.today.fire = fire

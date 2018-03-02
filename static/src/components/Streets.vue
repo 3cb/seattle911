@@ -21,7 +21,10 @@ export default {
         type: "circle",
         source: "fcalls",
         paint: {
-          "circle-radius": 6,
+          "circle-radius": {
+            base: 1.75,
+            stops: [[10, 2], [22, 100]]
+          },
           "circle-color": "#B42222"
         }
       },
@@ -30,7 +33,10 @@ export default {
         type: "circle",
         source: "pcalls",
         paint: {
-          "circle-radius": 6,
+          "circle-radius": {
+            base: 1.75,
+            stops: [[10, 2], [22, 100]]
+          },
           "circle-color": "#034cc1"
         }
       }
@@ -75,7 +81,7 @@ export default {
       container: "map",
       style: "mapbox://styles/mapbox/streets-v10",
       center: [-122.335167, 47.608013],
-      zoom: 10.75
+      zoom: 11
     });
     // Add zoom and rotation controls to the map.
     this.map.addControl(new mapboxgl.NavigationControl());

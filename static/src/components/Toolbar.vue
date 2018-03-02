@@ -10,40 +10,16 @@
           <a class="button is-rounded sb-police" @click="togglePolice">Toggle Police</a>
         </div>
         <div class="column is-12">
-           <a class="button is-rounded sb-date" @click="toggleDatePicker">
-             <span v-show="!showDatePicker" class="icon is-small">
-               <i class="fas fa-angle-double-right"></i>
-             </span>
-             <span v-show="showDatePicker" class="icon is-small">
-               <i class="fas fa-angle-double-down"></i>
-             </span>
-             <span>{{ displayDates }}</span>
-           </a>
-        </div>
-        <div class="column is-12">
-          <date-picker v-show="showDatePicker"></date-picker>
+          <date-picker></date-picker>
         </div>
       </div>
 </template>
 
 <script>
 import DatePicker from "./DatePicker.vue";
-import { DateTime } from "luxon";
 
 export default {
   props: ["map", "fireLayer", "policeLayer"],
-  computed: {
-    showDatePicker() {
-      return this.$store.state.ui.showDatePicker;
-    },
-    displayDates() {
-      return this.$store.state.ui.showToday
-        ? DateTime.local()
-            .setZone("America/Los_Angeles")
-            .toISODate()
-        : this.$store.state.features.history.date.split("~").join(" to ");
-    }
-  },
   methods: {
     toggleStyle() {
       this.$store.commit("toggleStyle");
@@ -64,9 +40,6 @@ export default {
       }
       this.$store.commit("togglePolice")
     },
-    toggleDatePicker() {
-      this.$store.commit("toggleDatePicker");
-    }
   },
   components: {
     DatePicker

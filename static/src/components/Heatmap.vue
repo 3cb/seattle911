@@ -24,30 +24,31 @@ export default {
         paint: {
           "heatmap-weight": {
             type: "exponential",
-            stops: [[0, 0], [6, 1]]
+            stops: [[1, 0], [1, 1]]
           },
           "heatmap-intensity": {
-            stops: [[0, 1], [9, 3]]
+            stops: [[1, 1], [13, 3]]
           },
           "heatmap-color": [
             "interpolate",
             ["linear"],
             ["heatmap-density"],
             0,
-            "rgba(33,102,172,0)",
+            "hsla(0, 100%, 80%, 0.2)",
             0.2,
-            "rgb(103,169,207)",
+            "hsla(0, 100%, 70%, 0.6)",
             0.4,
-            "rgb(209,229,240)",
+            "hsla(0, 100%, 60%, 0.8)",
             0.6,
-            "rgb(253,219,199)",
+            "hsla(0, 100%, 50%, 0.9)",
             0.8,
-            "rgb(239,138,98)",
+            "hsla(0, 100%, 40%, 0.95)",
             1,
-            "rgb(178,24,43)"
+            "hsla(0, 100%, 30%, 1)"
           ],
           "heatmap-radius": {
-            stops: [[0, 2], [9, 20]]
+            base: 1.75,
+            stops: [[10, 2.5], [22, 100]]
           }
         }
       },
@@ -58,30 +59,31 @@ export default {
         paint: {
           "heatmap-weight": {
             type: "exponential",
-            stops: [[0, 0], [6, 1]]
+            stops: [[1, 0], [1, 1]]
           },
           "heatmap-intensity": {
-            stops: [[0, 1], [9, 3]]
+            stops: [[1, 1], [13, 3]]
           },
           "heatmap-color": [
             "interpolate",
             ["linear"],
             ["heatmap-density"],
             0,
-            "rgba(33,102,172,0)",
+            "hsla(225, 100%, 80%, 0.2)",
             0.2,
-            "rgb(103,169,207)",
+            "hsla(225, 100%, 70%, 0.6)",
             0.4,
-            "rgb(209,229,240)",
+            "hsla(225, 100%, 60%, 0.8)",
             0.6,
-            "#eff3ff",
+            "hsla(225, 100%, 50%, 0.9)",
             0.8,
-            "#9ecae1",
+            "hsla(225, 100%, 40%, 0.95)",
             1,
-            "#08519c"
+            "hsla(225, 100%, 30%, 1)"
           ],
           "heatmap-radius": {
-            stops: [[0, 2], [9, 20]]
+            base: 1.75,
+            stops: [[10, 2.5], [22, 100]]
           }
         }
       }
@@ -118,7 +120,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.commit("resetFirePolice")
+    this.$store.commit("resetFirePolice");
 
     mapboxgl.accessToken =
       "pk.eyJ1IjoibWFyY2NiIiwiYSI6ImNqYTR1enN2dGE0bWEyd3BhcTd6cnBzc3MifQ.Z4zYRzVCXv5zCqqdpgKZ-w";
@@ -126,7 +128,7 @@ export default {
       container: "heatmap",
       style: "mapbox://styles/mapbox/dark-v9",
       center: [-122.335167, 47.608013],
-      zoom: 10.75
+      zoom: 11
     });
     // Add zoom and rotation controls to the map.
     this.map.addControl(new mapboxgl.NavigationControl());
