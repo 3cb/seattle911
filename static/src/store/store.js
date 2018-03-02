@@ -23,7 +23,6 @@ export default new Vuex.Store({
         police: []
       },
       history: {
-        // type: '', // 'single' or 'range'
         date: '', // "YYYY-MM-DD" or "YYYY-MM-DD~YYYY-MM-DD"
         fire: [],
         police: []
