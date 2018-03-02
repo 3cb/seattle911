@@ -10,7 +10,6 @@
           <ul>
             <li :class="tabs.day"><a @click="setTab(1)">Day</a></li>
             <li :class="tabs.month"><a @click="setTab(2)">Month</a></li>
-            <li :class="tabs.year"><a @click="setTab(3)">Year</a></li>
           </ul>
         </div>
 
@@ -56,27 +55,6 @@
             </button>
           </div>
         </div>
-        <div v-show="tabs.is == 3" class="field">
-          <div class="control has-text-centered">
-            <el-date-picker
-                v-model="year"
-                type="year"
-                placeholder="Pick a Year"
-                :picker-options="pickerOptionsYear"
-            >
-            </el-date-picker>
-          </div>
-        </div>
-        <div v-show="tabs.is == 3" class="field">
-          <div class="control has-text-centered">
-            <button
-              :class="submitBtnStyle"
-              @click="submitDate(3)"
-              :disabled="!year">
-                Submit
-            </button>
-          </div>
-        </div>
       </div>
       <div class ="column is-10">
         <button
@@ -103,13 +81,12 @@ export default {
         is: 1,
         day: "is-active",
         month: "",
-        year: ""
       },
       day: null,
       // first day of selected month: "YYYY-MM-DD"
       month: null,
       // first day of selected year: "YYYY-MM-DD"
-      year: null,
+      // year: null,
       pickerOptionsDay: {
         disabledDate(time) {
           let date = DateTime.fromISO(
@@ -150,26 +127,6 @@ export default {
           }
         }
       },
-      pickerOptionsYear: {
-        disabledDate(time) {
-          let date = DateTime.fromISO(
-            DateTime.fromISO(time.toISOString())
-              .setZone("America/Los_Angeles")
-              .toISODate()
-          );
-          let now = DateTime.fromISO(
-            DateTime.local()
-              .setZone("America/Los_Angeles")
-              .toISODate()
-          );
-          let diff = now.diff(date, "years");
-          if (diff.years > 0) {
-            return false;
-          } else {
-            return true;
-          }
-        }
-      }
     };
   },
   computed: {
@@ -210,12 +167,6 @@ export default {
           this.tabs.month = "is-active";
           this.tabs.year = "";
           break;
-        case 3:
-          this.tabs.is = 3;
-          this.tabs.day = "";
-          this.tabs.month = "";
-          this.tabs.year = "is-active";
-          break;
       }
     },
     submitDate(type) {
@@ -227,9 +178,6 @@ export default {
           break;
         case 2:
           url = "/api/month/" + this.month.toISOString().split("T")[0];
-          break;
-        case 3:
-          url = "/api/year/" + this.year.toISOString().split("T")[0];
           break;
       }
       axios({
