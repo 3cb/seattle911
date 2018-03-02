@@ -28,7 +28,7 @@
         <div v-show="tabs.is == 1" class="field">
           <div class="control has-text-centered">
             <button
-              class="button is-outlined is-link"
+              :class="submitBtnStyle"
               @click="submitDate(1)"
               :disabled="!day">
                 Submit
@@ -49,7 +49,7 @@
         <div v-show="tabs.is == 2" class="field">
           <div class="control has-text-centered">
             <button
-              class="button is-outlined is-link"
+              :class="submitBtnStyle"
               @click="submitDate(2)"
               :disabled="!month">
                 Submit
@@ -70,7 +70,7 @@
         <div v-show="tabs.is == 3" class="field">
           <div class="control has-text-centered">
             <button
-              class="button is-outlined is-link"
+              :class="submitBtnStyle"
               @click="submitDate(3)"
               :disabled="!year">
                 Submit
@@ -183,6 +183,11 @@ export default {
             .toISODate()
         : this.$store.state.features.history.date.split("~").join("  to  ");
     },
+    submitBtnStyle() {
+      return this.$store.state.ui.submitIsLoading
+        ? "button is-link is-loading"
+        : "button is-outlined is-link";
+    },
     displayButtonLabel() {
       return this.showToday ? "Show Historical Calls" : "Show Today's Calls";
     },
@@ -214,6 +219,7 @@ export default {
       }
     },
     submitDate(type) {
+      this.$store.commit("toggleIsLoading");
       var url = "";
       switch (type) {
         case 1:
@@ -240,9 +246,11 @@ export default {
             type: "history"
           });
           this.$store.commit("showHistory");
+          this.$store.commit("toggleIsLoading");
         })
         .catch(err => {
           console.error("error getting historical 911 call data", err);
+          this.$store.commit("toggleIsLoading");
         });
     },
     toggleDisplay() {

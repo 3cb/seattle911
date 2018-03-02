@@ -14,6 +14,7 @@ export default new Vuex.Store({
       showStreets: true,
       showFire: true,
       showPolice: true,
+      submitIsLoading: false,
     },
 
     features: {
@@ -54,6 +55,9 @@ export default new Vuex.Store({
       state.ui.showPolice = !state.ui.showPolice;
     },
 
+    toggleIsLoading(state) {
+      state.ui.submitIsLoading = !state.ui.submitIsLoading
+    },
     showToday(state) {
       state.ui.showToday = true
     },
