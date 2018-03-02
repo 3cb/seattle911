@@ -23,7 +23,7 @@ export default {
         paint: {
           "circle-radius": {
             base: 1.75,
-            stops: [[10.75, 2], [22, 100]]
+            stops: [[10, 2], [22, 100]]
           },
           "circle-color": "#B42222"
         }
