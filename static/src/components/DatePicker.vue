@@ -29,7 +29,7 @@
           <div class="control has-text-centered">
             <button
               class="button is-outlined is-link"
-              @click="submitDay"
+              @click="submitDate(1)"
               :disabled="!day">
                 Submit
             </button>
@@ -50,7 +50,7 @@
           <div class="control has-text-centered">
             <button
               class="button is-outlined is-link"
-              @click="submitMonth"
+              @click="submitDate(2)"
               :disabled="!month">
                 Submit
             </button>
@@ -71,7 +71,7 @@
           <div class="control has-text-centered">
             <button
               class="button is-outlined is-link"
-              @click="submitYear"
+              @click="submitDate(3)"
               :disabled="!year">
                 Submit
             </button>
@@ -213,49 +213,21 @@ export default {
           break;
       }
     },
-    submitDay() {
+    submitDate(type) {
+      var url = "";
+      switch (type) {
+        case 1:
+          url = "/api/day/" + this.day.toISOString().split("T")[0];
+          break;
+        case 2:
+          url = "/api/month/" + this.month.toISOString().split("T")[0];
+          break;
+        case 3:
+          url = "/api/year/" + this.year.toISOString().split("T")[0];
+          break;
+      }
       axios({
-        url: "/api/day/" + this.day.toISOString().split("T")[0],
-        method: "get",
-        responseType: "arraybuffer"
-      })
-        .then(response => {
-          let bytes = new Uint8Array(response.data);
-          let buf = new flatbuffers.ByteBuffer(bytes);
-          let message = seattle.Message.getRootAsMessage(buf);
-          this.$store.commit("updateFeatures", {
-            msg: message,
-            type: "history"
-          });
-          this.$store.commit("showHistory");
-        })
-        .catch(err => {
-          console.error("error getting historical 911 call data", err);
-        });
-    },
-    submitMonth() {
-      axios({
-        url: "/api/month/" + this.month.toISOString().split("T")[0],
-        method: "get",
-        responseType: "arraybuffer"
-      })
-        .then(response => {
-          let bytes = new Uint8Array(response.data);
-          let buf = new flatbuffers.ByteBuffer(bytes);
-          let message = seattle.Message.getRootAsMessage(buf);
-          this.$store.commit("updateFeatures", {
-            msg: message,
-            type: "history"
-          });
-          this.$store.commit("showHistory");
-        })
-        .catch(err => {
-          console.error("error getting historical 911 call data", err);
-        });
-    },
-    submitYear() {
-      axios({
-        url: "/api/year/" + this.year.toISOString().split("T")[0],
+        url: url,
         method: "get",
         responseType: "arraybuffer"
       })
