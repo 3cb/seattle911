@@ -79,7 +79,7 @@ export default {
       "pk.eyJ1IjoibWFyY2NiIiwiYSI6ImNqYTR1enN2dGE0bWEyd3BhcTd6cnBzc3MifQ.Z4zYRzVCXv5zCqqdpgKZ-w";
     this.map = new mapboxgl.Map({
       container: "map",
-      style: "mapbox://styles/mapbox/streets-v10",
+      style: 'mapbox://styles/mapbox/light-v9',
       center: [-122.335167, 47.608013],
       zoom: 11
     });
