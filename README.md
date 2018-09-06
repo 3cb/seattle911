@@ -4,6 +4,8 @@
 
 > Fire API Docs: https://dev.socrata.com/foundry/data.seattle.gov/grwu-wqtk
 
+*** The following API has been deprecated - data stops after May 8, 2018
+*** New dataset (https://data.seattle.gov/resource/xurz-654a.json) does not include latitude and longitude
 > Police API Docs: https://dev.socrata.com/foundry/data.seattle.gov/pu5n-trf4
 
 ## Build Setup
