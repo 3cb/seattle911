@@ -86,7 +86,6 @@ export default {
       // first day of selected month: "YYYY-MM-DD"
       month: null,
       // first day of selected year: "YYYY-MM-DD"
-      // year: null,
       pickerOptionsDay: {
         disabledDate(time) {
           let date = DateTime.fromISO(

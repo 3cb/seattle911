@@ -13,19 +13,16 @@ export default new Vuex.Store({
       showToday: true,
       showStreets: true,
       showFire: true,
-      showPolice: true,
       submitIsLoading: false,
     },
 
     features: {
       today: {
         fire: [],
-        police: []
       },
       history: {
         date: '', // "YYYY-MM-DD" or "YYYY-MM-DD~YYYY-MM-DD"
         fire: [],
-        police: []
       }
     }
   },
@@ -45,13 +42,9 @@ export default new Vuex.Store({
 
     resetFirePolice(state) {
       state.ui.showFire = true
-      state.ui.showPolice = true
     },
     toggleFire(state) {
       state.ui.showFire = !state.ui.showFire;
-    },
-    togglePolice(state) {
-      state.ui.showPolice = !state.ui.showPolice;
     },
 
     toggleIsLoading(state) {
@@ -82,27 +75,11 @@ export default new Vuex.Store({
         })
       }
 
-      var police = []
-      for (let i = 0; i < msg.policeCallsLength(); i++) {
-        police.push({
-          "type": "Feature",
-          "properties": {
-            "description": "<strong>" + msg.policeCalls(i).initialTypeDescription().toUpperCase() + "</strong><p>At Scene Time: " + msg.policeCalls(i).atSceneTime().split("T")[1].split(".")[0] + "</p><p>Date: " + msg.policeCalls(i).atSceneTime().split("T")[0] + "</p><p>Location: " + msg.policeCalls(i).hundredBlockLocation() + "</p><p>Event #: " + msg.policeCalls(i).cadEventNumber() + "</p>"
-          },
-          "geometry": {
-            "type": "Point",
-            "coordinates": [parseFloat(msg.policeCalls(i).longitude()), parseFloat(msg.policeCalls(i).latitude())]
-          }
-        })
-      }
-
       if (type === 'today') {
         state.features.today.fire = fire
-        state.features.today.police = police
       } else if (type === 'history') {
         state.features.history.date = msg.date()
         state.features.history.fire = fire
-        state.features.history.police = police
       }
     }
   }

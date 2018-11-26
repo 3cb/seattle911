@@ -1,6 +1,6 @@
 <template>
     <div>
-      <toolbar :map="map" :fireLayer="fireLayer" :policeLayer="policeLayer"></toolbar>
+      <toolbar :map="map" :fireLayer="fireLayer"></toolbar>
       <div id='map'></div>
     </div>
 </template>
@@ -27,18 +27,6 @@ export default {
           },
           "circle-color": "#B42222"
         }
-      },
-      policeLayer: {
-        id: "police",
-        type: "circle",
-        source: "pcalls",
-        paint: {
-          "circle-radius": {
-            base: 1.75,
-            stops: [[10, 2], [22, 100]]
-          },
-          "circle-color": "#034cc1"
-        }
       }
     };
   },
@@ -49,13 +37,6 @@ export default {
       } else {
         return this.$store.state.features.history.fire;
       }
-    },
-    pfeatures() {
-      if (this.$store.state.ui.showToday === true) {
-        return this.$store.state.features.today.police;
-      } else {
-        return this.$store.state.features.history.police;
-      }
     }
   },
   watch: {
@@ -63,12 +44,6 @@ export default {
       this.map.getSource("fcalls").setData({
         type: "FeatureCollection",
         features: fft
-      });
-    },
-    pfeatures(pft) {
-      this.map.getSource("pcalls").setData({
-        type: "FeatureCollection",
-        features: pft
       });
     }
   },
@@ -110,15 +85,7 @@ export default {
               features: this.ffeatures
             }
           });
-          this.map.addSource("pcalls", {
-            type: "geojson",
-            data: {
-              type: "FeatureCollection",
-              features: this.pfeatures
-            }
-          });
           this.map.addLayer(this.fireLayer);
-          this.map.addLayer(this.policeLayer);
 
           var popupFire = new mapboxgl.Popup({
             closeButton: false,
