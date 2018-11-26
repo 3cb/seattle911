@@ -60,24 +60,3 @@ func updateFire(t1 string, t2 string) ([]FireCall, error) {
 	}
 	return f, nil
 }
-
-func updatePolice(t1 string, t2 string) ([]PoliceCall, error) {
-	p := []PoliceCall{}
-
-	api := "https://data.seattle.gov/resource/pu5n-trf4.json?$limit=1000000&$where="
-	queryString := url.QueryEscape("at_scene_time between '" + t1 + "' and '" + t2 + "'")
-	resp, err := http.Get(api + queryString)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(data, &p)
-	if err != nil {
-		return nil, err
-	}
-	return p, nil
-}

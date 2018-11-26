@@ -15,7 +15,6 @@ func poll(db *bolt.DB, pool *ssc.Pool) {
 	loc, _ := time.LoadLocation("America/Los_Angeles")
 	d := strings.Split(fmt.Sprint(time.Now().In(loc)), " ")[0]
 	f := []FireCall{}
-	p := []PoliceCall{}
 
 	t1, t2 := getDate()
 	f, err := updateFire(t1, t2)
@@ -24,14 +23,8 @@ func poll(db *bolt.DB, pool *ssc.Pool) {
 	} else {
 		log.Printf("Fire updated")
 	}
-	p, err = updatePolice(t1, t2)
-	if err != nil {
-		log.Printf("Unable to update police calls: %v", err)
-	} else {
-		log.Printf("Police updated")
-	}
 
-	buf := serialize(f, p, d)
+	buf := serialize(f, d)
 	err = updateDB(db, d, buf)
 	if err != nil {
 		log.Printf("Unable to save to database: %v\n", err)
@@ -49,13 +42,7 @@ func poll(db *bolt.DB, pool *ssc.Pool) {
 		} else {
 			log.Printf("Fire updated")
 		}
-		p, err = updatePolice(t1, t2)
-		if err != nil {
-			log.Printf("Unable to update police calls: %v", err)
-		} else {
-			log.Printf("Police updated")
-		}
-		buf := serialize(f, p, d)
+		buf := serialize(f, d)
 		err = updateDB(db, d, buf)
 		if err != nil {
 			log.Printf("Unable to save to database: %v\n", err)

@@ -44,13 +44,7 @@ func SingleDate(db *bolt.DB) http.Handler {
 				w.Write([]byte("unable to get data"))
 				return
 			}
-			p, err := updatePolice(t1, t2)
-			if err != nil {
-				w.WriteHeader(400)
-				w.Write([]byte("unable to get data"))
-				return
-			}
-			buf = serialize(f, p, date)
+			buf = serialize(f, date)
 			err = updateDB(db, date, buf)
 			if err != nil {
 				log.Printf("Unable to save to database: %v\n", err)
@@ -77,15 +71,9 @@ func Month() http.Handler {
 			w.Write([]byte("unable to get data"))
 			return
 		}
-		p, err := updatePolice(t1, t2)
-		if err != nil {
-			w.WriteHeader(400)
-			w.Write([]byte("unable to get data"))
-			return
-		}
 
 		dateRange := date + "~" + strings.Split(t2, "T")[0]
-		buf := serialize(f, p, dateRange)
+		buf := serialize(f, dateRange)
 		w.Write(buf)
 	})
 }
@@ -107,15 +95,9 @@ func Year() http.Handler {
 			w.Write([]byte("unable to get data"))
 			return
 		}
-		p, err := updatePolice(t1, t2)
-		if err != nil {
-			w.WriteHeader(400)
-			w.Write([]byte("unable to get data"))
-			return
-		}
 
 		dateRange := date + "~" + strings.Split(t2, "T")[0]
-		buf := serialize(f, p, dateRange)
+		buf := serialize(f, dateRange)
 		w.Write(buf)
 	})
 }

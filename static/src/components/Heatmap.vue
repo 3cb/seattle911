@@ -1,6 +1,6 @@
 <template>
     <div>
-        <toolbar :map="map" :fireLayer="fireLayer" :policeLayer="policeLayer"></toolbar>
+        <toolbar :map="map" :fireLayer="fireLayer"></toolbar>
         <div id='heatmap'></div>
     </div>
 </template>
@@ -51,41 +51,6 @@ export default {
             stops: [[10, 2.5], [22, 100]]
           }
         }
-      },
-      policeLayer: {
-        id: "police",
-        type: "heatmap",
-        source: "pcalls",
-        paint: {
-          "heatmap-weight": {
-            type: "exponential",
-            stops: [[1, 0], [1, 1]]
-          },
-          "heatmap-intensity": {
-            stops: [[1, 1], [13, 3]]
-          },
-          "heatmap-color": [
-            "interpolate",
-            ["linear"],
-            ["heatmap-density"],
-            0,
-            "hsla(225, 100%, 80%, 0.2)",
-            0.2,
-            "hsla(225, 100%, 70%, 0.6)",
-            0.4,
-            "hsla(225, 100%, 60%, 0.8)",
-            0.6,
-            "hsla(225, 100%, 50%, 0.9)",
-            0.8,
-            "hsla(225, 100%, 40%, 0.95)",
-            1,
-            "hsla(225, 100%, 30%, 1)"
-          ],
-          "heatmap-radius": {
-            base: 1.75,
-            stops: [[10, 2.5], [22, 100]]
-          }
-        }
       }
     };
   },
@@ -96,13 +61,6 @@ export default {
       } else {
         return this.$store.state.features.history.fire;
       }
-    },
-    pfeatures() {
-      if (this.$store.state.ui.showToday === true) {
-        return this.$store.state.features.today.police;
-      } else {
-        return this.$store.state.features.history.police;
-      }
     }
   },
   watch: {
@@ -110,12 +68,6 @@ export default {
       this.map.getSource("fcalls").setData({
         type: "FeatureCollection",
         features: fft
-      });
-    },
-    pfeatures(pft) {
-      this.map.getSource("pcalls").setData({
-        type: "FeatureCollection",
-        features: pft
       });
     }
   },
@@ -157,15 +109,7 @@ export default {
               features: this.ffeatures
             }
           });
-          this.map.addSource("pcalls", {
-            type: "geojson",
-            data: {
-              type: "FeatureCollection",
-              features: this.pfeatures
-            }
-          });
           this.map.addLayer(this.fireLayer);
-          this.map.addLayer(this.policeLayer);
         })
         .catch(error => {
           console.error(error);
